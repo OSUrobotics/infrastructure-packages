@@ -21,7 +21,7 @@ git clone https://github.com/FlexBE/flexbe_app.git
 
 ### If you arent using hardware you can stop here otherwise:
 
-4. TODO: Still working on stable 18.04 ubuntu image with ROS for the Pi's. Will update in the future
+4. Documentation here: https://docs.google.com/document/d/1FJUptD0hqH2z4wYqg2FA9XU88-Y16Aj19yGCMj52ljQ/edit?usp=sharing
 
 ## Package Overview
 
@@ -49,7 +49,9 @@ Contains all necessary custom ros messages for the system. All future sensor mes
 Contains the nodes that will run on the raspberry pi and talk to the hardware. Right now there are 2 nodes, test_parameters and reset. The reset node is meant to be used as an outline for all future testbed reset nodes, put all hardware related calls within the callback of the action server. The test_parameter node is meant to recieve any pre test parameters for the physical hardware sent from flexbe and should be treated as a blueprint like reset. The test_parameter message type is an array of floats that will correspond to certain settings depending on the testbed.
 
 #### TODO/Future Updates:
-- Once the hardware and raspberry pi connection has been implemented the next step would be to implement a way to modify test parameters from flexbe or whatever portal we end up using. In its current state you have to use the same parameters for every test, a simple implementation would just be to use a csv file to hold parameters for each trial and read from that. Eventually we will need a permanent solution.
+= Once the tesbeds are in a semi permanent location it would be a good idea write a script and new launch file to automatically connect the testbed Pi's and the desktop so you dont have to go through a long process each time.
+- Once the hardware and raspberry pi connection has been implemented the next step would be to implement a way to modify test parameters from flexbe or whatever portal we end up using. In its current state you have to use the same parameters for every test, a simple solution would be to use a csv file to hold parameters for each trial and read from that. Eventually we will need a permanent solution.
+- When Pi hardware implementation is complete add launch file arguments for given testbeds so that it knows which nodes to launch.
 - Feedback examples have been provided in both blueprint.
 
 ### arm_control
@@ -85,7 +87,7 @@ name:=<string> (This is used to state the name of the test that will be used as 
   
 video:=true (You can use this to change whether or not you want to record video)
   
-use_hardware:=true (This activates the rosserial node and allows you to connect with any of the physical hardware. Not yet supported)
+hardware:=true (Should do more in the future but right now it just doesnt launch the raspi nodes so they can be run on remote hardware with another launch file.)
 ```
 They automatically default to false so you have to explicitly state them if you wish to use any combination of these.
 
