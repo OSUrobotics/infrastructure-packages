@@ -1,0 +1,7 @@
+<launch>
+
+<node pkg="infrastructure_raspi" name="reset" type="reset.py" output="screen"/>
+<node pkg="infrastructure_raspi" name="test_parameters" type="test_parameters.py" output="screen"/>
+
+</launch>
+
