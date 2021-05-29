@@ -72,13 +72,20 @@ This contains all the necessary Flexbe states and behaviors (as well as a bunch 
 
 ## How to use:
 ### Interfacing with an arm
-You will need to create your own Moveit class that you can use within the action server located in arm_control its still very much under developement so Im not gonna go into too much detail until we do further testing, if you need to use it or need a Moveit class contact me and I can walk you through.
+You will need to create your own Moveit class that you can use within the action server located in arm_control. Its still very much under developement so Im not gonna go into too much detail until we do further testing.
     
 ### Launching 
 ```
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
 
 ```
+If you are planning to use the hardware be sure to follow the document at the beginning of the README, you must also use the hardware:=true flag when running the above launch file. In addition on the Pi you must run the launch file:
+```
+roslaunch infrastructure_raspi start_raspi_nodes.launch
+
+```
+This is a temporary solution until the testbeds are further along and everything can be condensed to one launch file.
+
 This will launch FlexBe and all of the necesary nodes for a full trial. There are 4 arguments you can pass to the launch function for different behavior:
 ```
 collect_data:=true (This activates a rosbag that records all topics with the suffix "_infsensor", stored in data collection package)
