@@ -140,5 +140,5 @@ dmypy.json
 cython_debug/
 
 # data
-.bag
-.avi
+*.bag
+*.avi
