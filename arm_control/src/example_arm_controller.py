@@ -19,8 +19,8 @@ class ExampleArmController():
 		self.start_arm.publish_feedback(StageFeedback(status="EXAMPLE: GRABBING OBJECT"))
 		###do any arm calls or work here
 
-
-		time.sleep(3)
+                #pseudo timer
+		time.sleep(5)
 		self.start_arm.set_succeeded(StageResult(result = 0), text="SUCCESS")
 
 

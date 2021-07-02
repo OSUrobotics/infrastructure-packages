@@ -70,41 +70,41 @@ class System_Behaviour_PiSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'number_of_trials': 'number_of_trials'})
 
-			# x:800 y:212
+			# x:547 y:139
 			OperatableStateMachine.add('Set Test Parameters',
 										ParameterActionClient(topic=self.parameter_topic),
+										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
+										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:786 y:171
+			OperatableStateMachine.add('Start Data Collection',
+										StageActionClient(topic=self.start_data_collection_topic),
 										transitions={'completed': 'User Arm Control', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:562 y:122
-			OperatableStateMachine.add('Start Data Collection',
-										StageActionClient(topic=self.start_data_collection_topic),
-										transitions={'completed': 'Set Test Parameters', 'failed': 'failed'},
-										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:380 y:374
+			# x:702 y:404
 			OperatableStateMachine.add('Stop Data Collection',
 										StageActionClient(topic=self.stop_data_collection_topic),
-										transitions={'completed': 'Trial Control', 'failed': 'failed'},
+										transitions={'completed': 'Reset', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:298 y:127
 			OperatableStateMachine.add('Trial Control',
 										TrialControlState(),
-										transitions={'continue': 'Start Data Collection', 'failed': 'failed', 'completed': 'Test Control'},
+										transitions={'continue': 'Set Test Parameters', 'failed': 'failed', 'completed': 'Test Control'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'number_of_trials': 'number_of_trials'})
 
 			# x:851 y:308
 			OperatableStateMachine.add('User Arm Control',
 										StageActionClient(topic=self.arm_control_topic),
-										transitions={'completed': 'Reset', 'failed': 'failed'},
+										transitions={'completed': 'Stop Data Collection', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:670 y:421
+			# x:508 y:308
 			OperatableStateMachine.add('Reset',
 										StageActionClient(topic=self.reset_topic),
-										transitions={'completed': 'Stop Data Collection', 'failed': 'failed'},
+										transitions={'completed': 'Trial Control', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 

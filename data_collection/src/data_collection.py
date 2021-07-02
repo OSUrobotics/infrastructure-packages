@@ -39,7 +39,7 @@ class DataCollection():
 
 					self.start_collection.publish_feedback(StageFeedback(status="STARTING RECORDING"))
 					while(self.collection_flag == True and cap.isOpened() and not rospy.is_shutdown()):
-						ret, frame = cap.read()
+                                                ret, frame = cap.read()
 						if(not ret):
 							print("ERROR, CANT GET FRAME")
 							break
@@ -61,7 +61,7 @@ class DataCollection():
 
 		self.collection_flag = True
 		self.trial_count += 1
-		time.sleep(5)
+		time.sleep(3)
 		self.start_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
 			
 
@@ -73,7 +73,7 @@ class DataCollection():
 			return
 		
 		self.collection_flag = False
-		time.sleep(5)
+		#time.sleep(5)
 		self.stop_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
   
 
