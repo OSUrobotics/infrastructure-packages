@@ -61,7 +61,8 @@ class DataCollection():
 
 		self.collection_flag = True
 		self.trial_count += 1
-		time.sleep(3)
+		#used for hardware controller
+                time.sleep(3)
 		self.start_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
 			
 
