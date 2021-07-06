@@ -19,6 +19,9 @@
 <node pkg="rosbag" type="record" name="rosbag_record_sensors"
        args="record -o $(find data_collection)/stored_data/rosbags/$(arg test_name) -e '(.*)_infsensor'" if="$(arg collect_data)"/>  
 
+<node pkg="rosbag" type="record" name="rosbag_record_timestamps"
+       args="record -o $(find data_collection)/stored_data/rosbags/timestamps -e '(.*)_timestamps'" if="$(arg collect_data)"/>  
+
 <node pkg="data_collection" name="data_collection" type="data_collection.py" output="screen"/>
 
 <node pkg="infrastructure_raspi" name="reset" type="reset.py" output="screen" if="$(eval arg('hardware') == 0)"/>

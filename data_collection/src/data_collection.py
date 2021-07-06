@@ -8,7 +8,7 @@ import roslaunch
 import numpy as np
 import cv2 as cv
 import os
-from infrastructure_msgs.msg import StageAction, StageGoal, StageFeedback, StageResult
+from infrastructure_msgs.msg import StageAction, StageGoal, StageFeedback, StageResult, DataTimestamps
 
 
 
@@ -22,6 +22,8 @@ class DataCollection():
 		self.start_collection.start()
 		self.stop_collection.start()
 
+                self.time_stamp = DataTimestamps()
+                self.time_stamp_pub = rospy.Publisher("hardware_timestamps", DataTimestamps, queue_size=10)
 		self.collection_flag = False
 		self.trial_count = 0
 		self.video_path = os.path.dirname(os.path.realpath(__file__))
@@ -63,6 +65,8 @@ class DataCollection():
 		self.trial_count += 1
 		#used for hardware controller
                 time.sleep(3)
+                self.time_stamp.trial_number = self.trial_count
+                self.time_stamp.collection_start_time = rospy.Time.now()
 		self.start_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
 			
 
@@ -74,6 +78,9 @@ class DataCollection():
 			return
 		
 		self.collection_flag = False
+                self.time_stamp.collection_end_time = rospy.Time.now()
+                self.time_stamp.total_time = self.time_stamp.collection_end_time.secs - self.time_stamp.collection_start_time.secs
+                self.time_stamp_pub.publish(self.time_stamp)
 		#time.sleep(5)
 		self.stop_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
   
