@@ -5,7 +5,7 @@
 #
 # drawer_controller.py
 #
-# Ryan Roberts
+# Author: Ryan Roberts
 #
 # A node that handles all of the Action servers and topics for the Drawer
 
@@ -104,4 +104,3 @@ if __name__ == "__main__":
     drawer = Drawer()
     rospy.init_node("drawer_controller", argv=sys.argv)
     initialize = HardwareController(drawer)
-#    rospy.spin()
