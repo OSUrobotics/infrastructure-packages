@@ -12,33 +12,41 @@ class Testbed():
         
         
         # Variables for moving cone up and down
-        self.reset_cone_pul = 5  # pin 9
+        self.reset_cone_pul = 5  # pin 29
         self.reset_cone_dir = 6  # pin 31
         self.reset_cone_en = 13  # pin 33 (HIGH to Enable / LOW to Disable)
 
         self.reset_cone_speed = 0.000001 # default value
 
-        self.reset_cable_pul = num  # pin
-        self.reset_cable_dir = num  # pin
-        self.reset_cable_en = num  # pin  (HIGH to Enable / LOW to Disable)
-        self.reset_cable_speed = 0.000001  # default value
-
-        # limit switches
         self.cone_limit_switch = num  # pin
-
-        # hall effect sensor for rotating table
-        self.hall_effect  = num  # pin
         
+        self.lift_time_limit = 2  # seconds
+        self.lower_time_limit = 0.5  # seconds
+
         #contact plates on the cone - like a button
         self.cone_button = num  # pin
 
 
-        self.spool_out_time_limit = 2  # seconds
-        self.spool_in_time_limit = 2  # seconds
-        self.lift_time_limit = 2  # seconds
-        self.lower_time_limit = 2  # seconds
-        
+        # Variables for spooling in/out the cable
+        self.reset_cable_pul = 17  # pin 11
+        self.reset_cable_dir = 27  # pin 13
+        self.reset_cable_en = 22  # pin 15 (HIGH to Enable / LOW to Disable)
+        self.reset_cable_speed = 0.000001  # default value
 
+        self.spool_out_time_limit = 0.5  # seconds
+        self.spool_in_time_limit = 2  # seconds
+
+        # hall effect sensor for rotating table
+        self.hall_effect  = num  # pin
+
+        # Variables for turntable/encoder wheel
+        self.turntable_motor_en = 25  # pin 22
+        self.turntable_motor_in1 = 24  # pin 18
+        self.turntable_motor_in2 = 23  # pin 16
+
+        # Variables for comunication with arduino for turntable encoder
+
+        # Setting up the pins
         gpio.setmode(gpio.BCM)
         gpio.setup(self.reset_cone_pul, gpio.OUT)
         gpio.setup(self.reset_cone_dir, gpio.OUT)
@@ -79,8 +87,9 @@ class Testbed():
             self.reset_cone_motor.move_for(0.1, self.reset_cone_motor.CW)
             lower_time= time() - start_time
 
-    def table_rotation(self):
-        
+    def reset_turntable(self):
+        while True:
+            if 
         pass
 
     def cable_reset_spool_in(self):
@@ -100,3 +109,10 @@ class Testbed():
                 break
             self.reset_cable_motor.move_for(0.1, self.reset_cable_motor.CW)  # check rotations
             spool_out_time = time() - start_time
+
+
+if __name__ == '__main__':
+
+    reset_testbed = Testbed()
+
+    reset_testbed.
