@@ -24,7 +24,7 @@ class Testbed():
         self.lower_time_limit = 0.5  # seconds
 
         #contact plates on the cone - like a button
-        self.cone_button = num  # pin
+        # self.cone_button = num  # pin
 
 
         # Variables for spooling in/out the cable
@@ -37,7 +37,7 @@ class Testbed():
         self.spool_in_time_limit = 2  # seconds
 
         # hall effect sensor for rotating table
-        self.hall_effect  = num  # pin
+        # self.hall_effect  = num  # pin
 
         # Variables for turntable/encoder wheel
         self.turntable_motor_en = 25  # pin 22
