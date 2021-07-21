@@ -96,7 +96,7 @@ class Testbed():  # this is a test
         start_time = time()
         spool_in_time = 0
         while True:
-            if spool_in_time >= self.spool_in_time_limit or gpio.input(self.cone_button) == True:
+            if spool_in_time >= self.spool_in_time_limit or gpio.input(self.cone_button) == False:
                 break
             self.reset_cable_motor.move_for(0.1, self.reset_cable_motor.CCW)  # check rotations
             spool_in_time = time() - start_time
