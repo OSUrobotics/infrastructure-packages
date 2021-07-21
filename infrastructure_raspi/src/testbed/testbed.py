@@ -6,7 +6,7 @@ import spidev
 import RPi.GPIO as gpio
 from stepper_motor import StepperMotor
 
-class Testbed():
+class Testbed():  # this is a test
 
     def __init__(self):
         
