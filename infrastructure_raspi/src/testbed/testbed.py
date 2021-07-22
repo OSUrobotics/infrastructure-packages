@@ -100,7 +100,7 @@ class Testbed():  # this is a test
                 break
             self.reset_cable_motor.move_for(0.1, self.reset_cable_motor.CCW)  # check rotations
             spool_in_time = time() - start_time
-        if self.cone_button == True:
+        if self.cone_button == False:
             print("button was pressed")
 
     def cable_reset_spool_out(self):
