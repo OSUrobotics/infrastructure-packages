@@ -47,6 +47,7 @@ class Testbed():  # this is a test
         # Variables for comunication with arduino for turntable encoder
 
         # Setting up the pins
+        gpio.setwarnings(False)
         gpio.setmode(gpio.BCM)
         gpio.setup(self.reset_cone_pul, gpio.OUT)
         gpio.setup(self.reset_cone_dir, gpio.OUT)
@@ -57,7 +58,7 @@ class Testbed():  # this is a test
 
  #       gpio.setup(self.cone_limit_switch, gpio.IN)
  #       gpio.setup(self.hall_effect, gpio.IN)
-        gpio.setup(self.cone_button, gpio.IN, pull_up_down = gpio.PUD_UP)
+        gpio.setup(self.cone_button, gpio.IN, pull_up_down = gpio.PUD_DOWN)
 
         self.reset_cone_motor = StepperMotor(self.reset_cone_pul, self.reset_cone_dir, self.reset_cone_en, self.reset_cone_speed)
         self.reset_cable_motor = StepperMotor(self.reset_cable_pul, self.reset_cable_dir, self.reset_cable_en, self.reset_cable_speed)
@@ -85,7 +86,7 @@ class Testbed():  # this is a test
             if lower_time >= self.lower_time_limit:
                 break
             self.reset_cone_motor.move_for(0.1, self.reset_cone_motor.CW)
-            lower_time= time() - start_time
+            lower_time = time() - start_time
 
 #    def reset_turntable(self):
 #        while True:
@@ -96,12 +97,15 @@ class Testbed():  # this is a test
         start_time = time()
         spool_in_time = 0
         while True:
-            if spool_in_time >= self.spool_in_time_limit or gpio.input(self.cone_button) == False:
+            pin_value = gpio.input(self.cone_button)
+            if spool_in_time >= self.spool_in_time_limit or pin_value == gpio.HIGH:
+                if pin_value == gpio.HIGH:
+                    print("button was pressed")
                 break
-            self.reset_cable_motor.move_for(0.1, self.reset_cable_motor.CCW)  # check rotations
+                
+            self.reset_cable_motor.move_for(0.001, self.reset_cable_motor.CCW)  # check rotations
             spool_in_time = time() - start_time
-        if self.cone_button == False:
-            print("button was pressed")
+        
 
     def cable_reset_spool_out(self):
         start_time = time()
