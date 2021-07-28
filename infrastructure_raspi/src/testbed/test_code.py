@@ -26,7 +26,7 @@ class testbed_test():
         gpio.output(self.motor_in1, gpio.LOW)
         gpio.output(self.motor_in2, gpio.LOW)
         self.p = gpio.PWM(self.motor_pwm, 1000)
-        self.p.start(50)
+        self.p.start(75)
 
     def button_test(self):
         i = 0
@@ -37,22 +37,28 @@ class testbed_test():
                 i += 1
             # sleep(.01)
 
-    def motor(self):
-        
-        
-        # while True:
-            
-        #     gpio.output(self.motor_in1, gpio.LOW)
-        #     gpio.output(self.motor_in2, gpio.HIGH)
-
-    
+    def motor(self, duration=None):
         gpio.output(self.motor_in1, gpio.LOW)
         gpio.output(self.motor_in2, gpio.HIGH)
-        sleep(2)
+        if duration == None:
 
-        gpio.output(self.motor_in1, gpio.LOW)
-        gpio.output(self.motor_in2, gpio.LOW)
-        gpio.cleanup()
+            while True:
+                
+                # gpio.output(self.motor_in1, gpio.LOW)
+                # gpio.output(self.motor_in2, gpio.HIGH)
+
+                sleep(1)
+        else:
+            gpio.output(self.motor_in1, gpio.LOW)
+            gpio.output(self.motor_in2, gpio.HIGH)
+            sleep(duration)
+
+            gpio.output(self.motor_in1, gpio.LOW)
+            gpio.output(self.motor_in2, gpio.LOW)
+            gpio.cleanup()
+    
+    def motor_with_encoder(self):
+        pass
 
 
 
@@ -62,7 +68,8 @@ if __name__ == '__main__':
     test_num = input("""
     1) button
     2) motor
-    3) stepper motor
+    3) motor and encoder
+    4) stepper motor
 
     What do you want to test? (enter the number)
     """)
@@ -75,7 +82,14 @@ if __name__ == '__main__':
         test.button()
 
     elif test_num == 2:
-        test.motor()
+        
+        # try:
+        #     duration = input("how long to run motors? \n(Enter None if you want to run indefently)\n")
+        # except SyntaxError:
+        # if len(duration) == None:
+            # print("true")
 
+        # test.motor(duration=duration)
+        test.motor()
     else:
         print("not implemented yet")
