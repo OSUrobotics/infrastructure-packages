@@ -19,7 +19,7 @@ class Testbed():  # this is a test
         self.reset_cone_speed = 0.000001 # default value
 
         #TODO
-        self.cone_limit_switch = 10  # pin
+        self.cone_limit_switch = 17  # pin
         
         self.lift_time_limit = 2  # seconds
         self.lower_time_limit = 0.5  # seconds
@@ -45,7 +45,7 @@ class Testbed():  # this is a test
         self.turntable_motor_pwm = 4 # pin 7
         self.turntable_motor_in1 = 21 # pin 
         self.turntable_motor_in2 = 27 # pin 
-        self.turntable_motor_en = 13
+        self.turntable_motor_en = 13  
 
         # Variables for comunication with arduino for turntable encoder
 
@@ -73,7 +73,7 @@ class Testbed():  # this is a test
         self.turntable_pwm.start(50)
 
         gpio.setup(self.cone_limit_switch, gpio.IN, pull_up_down = gpio.PUD_DOWN)
-        gpio.setup(self.hall_effect, gpio.IN, pull_up_down = gpio.PUD_DOWN)
+        # gpio.setup(self.hall_effect, gpio.IN, pull_up_down = gpio.PUD_DOWN)
         gpio.setup(self.cone_button, gpio.IN, pull_up_down = gpio.PUD_DOWN)
 
         # sets up the stepper motors
@@ -96,7 +96,7 @@ class Testbed():  # this is a test
         start_time = time()
         lift_time = 0
         while True:
-            if lift_time >= self.lift_time_limit or gpio.input(self.cone_limit_switch) == gpio.HIGH:
+            if lift_time >= self.lift_time_limit: # or gpio.input(self.cone_limit_switch) == gpio.HIGH:
                 break
             self.reset_cone_motor.move_for(0.001, self.reset_cone_motor.CCW)
             lift_time = time() - start_time

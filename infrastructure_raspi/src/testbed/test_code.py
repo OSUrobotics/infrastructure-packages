@@ -6,7 +6,8 @@ import RPi.GPIO as gpio
 class testbed_test():
     def __init__(self):
         
-        self.button_pin = 24
+        # self.button_pin = 24
+        self.button_pin = 14
 
         self.motor_pwm = 4 # pin 7
         self.motor_in1 = 21 # pin 
@@ -79,7 +80,7 @@ if __name__ == '__main__':
 
     if test_num == 1:
 
-        test.button()
+        test.button_test()
 
     elif test_num == 2:
         
