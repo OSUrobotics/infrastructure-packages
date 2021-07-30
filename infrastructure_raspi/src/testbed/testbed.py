@@ -22,7 +22,7 @@ class Testbed():  # this is a test
         self.cone_limit_switch = 17  # pin
         
         self.lift_time_limit = 2  # seconds
-        self.lower_time_limit = 0.5  # seconds
+        self.lower_time_limit = 3  # seconds
 
         #contact plates on the cone - like a button
         self.cone_button = 24  # pin
@@ -34,7 +34,7 @@ class Testbed():  # this is a test
         self.reset_cable_en = 5 # pin 29 Blue wire (HIGH to Enable / LOW to Disable)
         self.reset_cable_speed = 0.000001  # default value
 
-        self.spool_out_time_limit = 0.5  # seconds
+        self.spool_out_time_limit = 3  # seconds
         self.spool_in_time_limit = 3  # seconds
 
         #TODO
@@ -96,7 +96,12 @@ class Testbed():  # this is a test
         start_time = time()
         lift_time = 0
         while True:
-            if lift_time >= self.lift_time_limit: # or gpio.input(self.cone_limit_switch) == gpio.HIGH:
+            button = gpio.input(self.cone_limit_switch)
+            if lift_time >= self.lift_time_limit or button == gpio.HIGH:
+                if button == gpio.HIGH:
+                    print("button was pressed")
+                else:
+                    print("time ran out")
                 break
             self.reset_cone_motor.move_for(0.001, self.reset_cone_motor.CCW)
             lift_time = time() - start_time

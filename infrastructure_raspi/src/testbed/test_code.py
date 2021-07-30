@@ -7,7 +7,7 @@ class testbed_test():
     def __init__(self):
         
         # self.button_pin = 24
-        self.button_pin = 14
+        self.button_pin = 17
 
         self.motor_pwm = 4 # pin 7
         self.motor_in1 = 21 # pin 
