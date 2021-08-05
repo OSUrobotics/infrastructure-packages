@@ -1,5 +1,5 @@
 from time import time, sleep
-#import spidev
+import spidev
 import RPi.GPIO as gpio
 
 
@@ -28,6 +28,13 @@ class testbed_test():
         gpio.output(self.motor_in2, gpio.LOW)
         self.p = gpio.PWM(self.motor_pwm, 1000)
         self.p.start(75)
+
+        self.spi_bus = 0
+        self.spi_device = 0
+        self.spi = spidev.SpiDev()
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
+
 
     def button_test(self):
         i = 0
@@ -61,6 +68,58 @@ class testbed_test():
     def motor_with_encoder(self):
         pass
 
+    def talk_with_arduino(self):
+        # Send a null byte to check for value
+
+        # send_byte = 0x80
+        # send_byte = 0b1000000000000000
+        send_byte = [109]
+        print("this number is sent {}".format(send_byte))
+
+        # va = self.spi.xfer2([109])
+        self.spi.xfer2([109])
+        # print("this is send_byte {}".format(send_byte))
+        sleep(.0001)
+        # send_byte = [110]
+        # va2 = self.spi.xfer2([110])
+            
+        # sleep(.001)
+        rcv_byte = self.spi.xfer2([0xff])
+        sleep(.0001)
+        
+        # ba = self.spi.xfer2([0xff])
+        # sleep(.001)
+        # va = self.spi.xfer2([0])
+        rcv_byte2 = self.spi.xfer2([0])
+        # print(va[0])
+        sleep(.0001)
+        # self.spi.xfer2([0])
+        # print(rcv_byte2)
+
+        # repeat to check for a response
+
+        # rcv_byte = self.spi.xfer2([send_byte])
+
+        data_recv = rcv_byte #[0]
+
+        # b''.join([rcv_byte[0], rcv_byte2[0]])
+        c = rcv_byte[0] << 8
+        print(c)
+
+        val = c + rcv_byte2[0]
+
+        print("val {}".format(val))
+
+
+        print("this is what was recieved:  {},  {}".format(rcv_byte[0], rcv_byte2[0]))
+
+        # if (data_recv != 0x80):
+
+        #     print ("Unable to communicate with Arduino "+str(data_recv))
+
+        #     quit()
+
+
 
 
 if __name__ == '__main__':
@@ -71,6 +130,7 @@ if __name__ == '__main__':
     2) motor
     3) motor and encoder
     4) stepper motor
+    5) Arduino Communication
 
     What do you want to test? (enter the number)
     """)
@@ -81,6 +141,9 @@ if __name__ == '__main__':
     if test_num == 1:
 
         test.button_test()
+
+    elif test_num == 5:
+        test.talk_with_arduino()
 
     elif test_num == 2:
         
