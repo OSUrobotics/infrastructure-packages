@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #from os import DirEntry
-from time import time
+from time import time, sleep
 import spidev
 import RPi.GPIO as gpio
 from stepper_motor import StepperMotor
@@ -48,6 +48,12 @@ class Testbed():  # this is a test
         self.turntable_motor_en = 13  
 
         # Variables for comunication with arduino for turntable encoder
+
+        self.spi_bus = 0
+        self.spi_device = 0
+        self.spi = spidev.SpiDev()
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
 
         # Setting up the pins
         gpio.setwarnings(False)
@@ -156,27 +162,46 @@ class Testbed():  # this is a test
         
         while True:
             if gpio.input(self.hall_effect) == gpio.HIGH:
-                gpio.output(self.motor_in1, gpio.LOW)
-                gpio.output(self.motor_in2, gpio.LOW)
+                gpio.output(self.turntable_motor_in1, gpio.LOW)
+                gpio.output(self.turntable_motor_in2, gpio.LOW)
                 break
             sleep(0.001)
 
     def turntable_move_angle(self, goal_angle):
 
         # tell the arduino to start counting
+        start_counting = 1
+        encoder_val = 2
+        get_val = 3
+        # get_val_p2 = 4
+        stop_counting = 5
 
+        self.spi.xfer2(start_counting)
+        sleep(0.0001)
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
-
+        
         while True:
-            # get current angle from the arduino
 
-            if current_angle >= goal_angle:
-                gpio.output(self.motor_in1, gpio.LOW)
-                gpio.output(self.motor_in2, gpio.LOW)
+
+            self.spi.xfer2([encoder_val])
+            sleep(0.0001)
+            encoder_value_part1 = self.spi.xfer2([get_val])
+            sleep(0.0001)
+            encoder_value_part2 = self.spi.xfer2([0])
+            sleep(0.0001)
+
+            value_part1 = encoder_value_part1[0] << 8
+            encoder_value = value_part1 + encoder_value_part2[0]
+
+            if encoder_value >= angle:
+                gpio.output(self.turntable_motor_in1, gpio.LOW)
+                gpio.output(self.turntable_motor_in2, gpio.LOW)
                 break
+        
+        self.spi.xfer2(stop_counting)
 
-            sleep(0.001)
+
 
 if __name__ == '__main__':
 

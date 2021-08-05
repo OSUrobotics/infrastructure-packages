@@ -68,56 +68,90 @@ class testbed_test():
     def motor_with_encoder(self):
         pass
 
-    def talk_with_arduino(self):
-        # Send a null byte to check for value
+    def talk_with_arduino(self, angle):
 
-        # send_byte = 0x80
-        # send_byte = 0b1000000000000000
-        send_byte = [109]
-        print("this number is sent {}".format(send_byte))
+        start_counting = 1
+        encoder_val = 2
+        get_val = 3
+        # get_val_p2 = 4
+        stop_counting = 5
 
-        # va = self.spi.xfer2([109])
-        self.spi.xfer2([109])
-        # print("this is send_byte {}".format(send_byte))
-        sleep(.0001)
-        # send_byte = [110]
-        # va2 = self.spi.xfer2([110])
-            
-        # sleep(.001)
-        rcv_byte = self.spi.xfer2([0xff])
-        sleep(.0001)
+        self.spi.xfer2(start_counting)
+        sleep(0.0001)
+
+        while True:
+
+            # encoder_val = [2]
+            # get_val_p1 = [3]
+            # get_val_p2 = [4]
+            # stop_counting = [5]
+
+            self.spi.xfer2([encoder_val])
+            sleep(0.0001)
+            encoder_value_part1 = self.spi.xfer2([get_val])
+            sleep(0.0001)
+            encoder_value_part2 = self.spi.xfer2([0])
+            sleep(0.0001)
+
+            value_part1 = encoder_value_part1[0] << 8
+            encoder_value = value_part1 + encoder_value_part2[0]
+
+            if encoder_value >= angle:
+                
+                break
         
-        # ba = self.spi.xfer2([0xff])
-        # sleep(.001)
-        # va = self.spi.xfer2([0])
-        rcv_byte2 = self.spi.xfer2([0])
-        # print(va[0])
-        sleep(.0001)
-        # self.spi.xfer2([0])
-        # print(rcv_byte2)
-
-        # repeat to check for a response
-
-        # rcv_byte = self.spi.xfer2([send_byte])
-
-        data_recv = rcv_byte #[0]
-
-        # b''.join([rcv_byte[0], rcv_byte2[0]])
-        c = rcv_byte[0] << 8
-        print(c)
-
-        val = c + rcv_byte2[0]
-
-        print("val {}".format(val))
+        self.spi.xfer2(stop_counting)
 
 
-        print("this is what was recieved:  {},  {}".format(rcv_byte[0], rcv_byte2[0]))
+        # # Send a null byte to check for value
 
-        # if (data_recv != 0x80):
+        # # send_byte = 0x80
+        # # send_byte = 0b1000000000000000
+        # send_byte = [109]
+        # print("this number is sent {}".format(send_byte))
 
-        #     print ("Unable to communicate with Arduino "+str(data_recv))
+        # # va = self.spi.xfer2([109])
+        # self.spi.xfer2([109])
+        # # print("this is send_byte {}".format(send_byte))
+        # sleep(.0001)
+        # # send_byte = [110]
+        # # va2 = self.spi.xfer2([110])
+            
+        # # sleep(.001)
+        # rcv_byte = self.spi.xfer2([0xff])
+        # sleep(.0001)
+        
+        # # ba = self.spi.xfer2([0xff])
+        # # sleep(.001)
+        # # va = self.spi.xfer2([0])
+        # rcv_byte2 = self.spi.xfer2([0])
+        # # print(va[0])
+        # sleep(.0001)
+        # # self.spi.xfer2([0])
+        # # print(rcv_byte2)
 
-        #     quit()
+        # # repeat to check for a response
+
+        # # rcv_byte = self.spi.xfer2([send_byte])
+
+        # data_recv = rcv_byte #[0]
+
+        # # b''.join([rcv_byte[0], rcv_byte2[0]])
+        # c = rcv_byte[0] << 8
+        # print(c)
+
+        # val = c + rcv_byte2[0]
+
+        # print("val {}".format(val))
+
+
+        # print("this is what was recieved:  {},  {}".format(rcv_byte[0], rcv_byte2[0]))
+
+        # # if (data_recv != 0x80):
+
+        # #     print ("Unable to communicate with Arduino "+str(data_recv))
+
+        # #     quit()
 
 
 
