@@ -21,8 +21,8 @@ class Testbed():  # this is a test
         
         self.cone_limit_switch = 17  # pin
         
-        self.lift_time_limit = 2  # seconds
-        self.lower_time_limit = 2.5  # seconds
+        self.lift_time_limit = 1.0  # seconds
+        self.lower_time_limit = 2.0  # seconds
 
         #contact plates on the cone - like a button
         self.cone_button = 24  # pin

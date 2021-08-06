@@ -14,8 +14,8 @@ class testbed_test():
         self.motor_in2 = 27 # pin 
         self.motor_en = 13
 
-        self.hall_effect_pin = 23
-        # self.hall_effect_pin = 2
+        # self.hall_effect_pin = 
+        self.hall_effect_pin = 14
         gpio.setwarnings(False)
         gpio.setmode(gpio.BCM)
         
@@ -31,7 +31,7 @@ class testbed_test():
         self.p = gpio.PWM(self.motor_pwm, 1000)
         self.p.start(75)
         
-        gpio.setup(self.hall_effect_pin, gpio.IN)
+        gpio.setup(self.hall_effect_pin, gpio.IN, pull_up_down= gpio.PUD_DOWN)
         
         self.spi_bus = 0
         self.spi_device = 0
