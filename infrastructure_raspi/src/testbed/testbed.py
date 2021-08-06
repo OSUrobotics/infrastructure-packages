@@ -18,11 +18,11 @@ class Testbed():  # this is a test
 
         self.reset_cone_speed = 0.000001 # default value
 
-        #TODO
+        
         self.cone_limit_switch = 17  # pin
         
         self.lift_time_limit = 2  # seconds
-        self.lower_time_limit = 3  # seconds
+        self.lower_time_limit = 2.5  # seconds
 
         #contact plates on the cone - like a button
         self.cone_button = 24  # pin
@@ -32,14 +32,14 @@ class Testbed():  # this is a test
         self.reset_cable_pul = 16 # pin Green wire
         self.reset_cable_dir = 6 # pin 31 Red wire
         self.reset_cable_en = 5 # pin 29 Blue wire (HIGH to Enable / LOW to Disable)
-        self.reset_cable_speed = 0.000001  # default value
+        self.reset_cable_speed = 0.00001  # default value
 
         self.spool_out_time_limit = 3  # seconds
         self.spool_in_time_limit = 3  # seconds
 
-        #TODO
+        
         # hall effect sensor for rotating table
-        self.hall_effect  = 100  # pin
+        self.hall_effect  = 23  # pin
 
         # Variables for turntable/encoder wheel
         self.turntable_motor_pwm = 4 # pin 7
@@ -79,7 +79,7 @@ class Testbed():  # this is a test
         self.turntable_pwm.start(50)
 
         gpio.setup(self.cone_limit_switch, gpio.IN, pull_up_down = gpio.PUD_DOWN)
-        # gpio.setup(self.hall_effect, gpio.IN, pull_up_down = gpio.PUD_DOWN)
+        gpio.setup(self.hall_effect, gpio.IN)#, pull_up_down = gpio.PUD_DOWN)
         gpio.setup(self.cone_button, gpio.IN, pull_up_down = gpio.PUD_DOWN)
 
         # sets up the stepper motors
@@ -153,7 +153,7 @@ class Testbed():  # this is a test
 
     def turntable_reset_home(self):
         delay = 0
-        if gpio.input(self.hall_effect) == gpio.HIGH:  # ensures that it goes to the propper home orientation.
+        if gpio.input(self.hall_effect) == gpio.LOW:  # ensures that it goes to the propper home orientation.
             delay = 2
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
@@ -161,13 +161,13 @@ class Testbed():  # this is a test
         sleep(delay)
         
         while True:
-            if gpio.input(self.hall_effect) == gpio.HIGH:
+            if gpio.input(self.hall_effect) == gpio.LOW:
                 gpio.output(self.turntable_motor_in1, gpio.LOW)
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
                 break
             sleep(0.001)
 
-    def turntable_move_angle(self, goal_angle):
+    def turntable_move_angle(self, goal_angle=20):
 
         # tell the arduino to start counting
         start_counting = 1
@@ -194,7 +194,7 @@ class Testbed():  # this is a test
             value_part1 = encoder_value_part1[0] << 8
             encoder_value = value_part1 + encoder_value_part2[0]
 
-            if encoder_value >= angle:
+            if encoder_value >= goal_angle:
                 gpio.output(self.turntable_motor_in1, gpio.LOW)
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
                 break
@@ -236,10 +236,10 @@ What do you want to test? (enter the number)
         reset_testbed.cone_reset_down()
     
     elif test_num == 5:
-        reset_testbed.turntable_home()
+        reset_testbed.turntable_reset_home()
     
     elif test_num == 6:
         angle = input("\nwhat angle do you want to rotate by?  (Degrees)\n")
-        reset_testbed.turntable_move_angle()
+        reset_testbed.turntable_move_angle(angle)
     else:
         print("\nNot implemented\n")
