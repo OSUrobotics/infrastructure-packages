@@ -7,7 +7,7 @@ class testbed_test():
     def __init__(self):
         
         # self.button_pin = 24
-        self.button_pin = 17
+        self.button_pin = 14
 
         self.motor_pwm = 4 # pin 7
         self.motor_in1 = 21 # pin 
@@ -15,7 +15,7 @@ class testbed_test():
         self.motor_en = 13
 
         # self.hall_effect_pin = 
-        self.hall_effect_pin = 14
+        self.hall_effect_pin = 23
         gpio.setwarnings(False)
         gpio.setmode(gpio.BCM)
         
@@ -100,6 +100,8 @@ class testbed_test():
             value_part1 = encoder_value_part1[0] << 8
             encoder_value = value_part1 + encoder_value_part2[0]
 
+            print(encoder_value)
+
             if encoder_value >= angle:
                 
                 break
@@ -120,6 +122,7 @@ class testbed_test():
 
 
 if __name__ == '__main__':
+    gpio.cleanup()
         
 
     test_num = input("""
