@@ -16,7 +16,7 @@ class Testbed():  # this is a test
         self.reset_cone_dir = 20  # pin
         self.reset_cone_en = 12  # pin  (HIGH to Enable / LOW to Disable)
 
-        self.reset_cone_speed = 0.000001 # default value
+        self.reset_cone_speed = 0.00001 # default value
 
         
         self.cone_limit_switch = 17  # pin
@@ -34,8 +34,8 @@ class Testbed():  # this is a test
         self.reset_cable_en = 5 # pin 29 Blue wire (HIGH to Enable / LOW to Disable)
         self.reset_cable_speed = 0.00001  # default value
 
-        self.spool_out_time_limit = 3  # seconds
-        self.spool_in_time_limit = 3  # seconds
+        self.spool_out_time_limit = 4.5  # seconds
+        self.spool_in_time_limit = 6  # seconds
 
         
         # hall effect sensor for rotating table
@@ -92,8 +92,11 @@ class Testbed():  # this is a test
 
         self.cone_reset_up()
         self.cable_reset_spool_in()
-        self.cone_reset_down()
         self.cable_reset_spool_out()
+        self.cone_reset_down()
+        # self.cable_reset_spool_out()
+        self.turntable_reset_home()
+        self.turntable_move_angle(356)
 
 
     def cone_reset_up(self, time_duration=None):
@@ -122,7 +125,7 @@ class Testbed():  # this is a test
         while True:
             if lower_time >= time_duration:
                 break
-            self.reset_cone_motor.move_for(0.1, self.reset_cone_motor.CW)
+            self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CW)
             lower_time = time() - start_time
 
 #    def reset_turntable(self):
@@ -185,32 +188,39 @@ class Testbed():  # this is a test
         encoder_val = 2
         get_val = 3
         # get_val_p2 = 4
-        stop_counting = 5
+        stop_counting = 4
 
-        self.spi.xfer2(start_counting)
+        self.spi.xfer2([4])
+
+        self.spi.xfer2([1])
         sleep(0.0001)
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
-        
+        counter = 0
         while True:
 
 
-            self.spi.xfer2([encoder_val])
+            self.spi.xfer2([2])
             sleep(0.0001)
-            encoder_value_part1 = self.spi.xfer2([get_val])
+            encoder_value_part1 = self.spi.xfer2([3])
             sleep(0.0001)
-            encoder_value_part2 = self.spi.xfer2([0])
+            encoder_value_part2 = self.spi.xfer2([3])
             sleep(0.0001)
 
             value_part1 = encoder_value_part1[0] << 8
             encoder_value = value_part1 + encoder_value_part2[0]
+            if encoder_value >= 361:
+                continue
+            else:
 
-            if encoder_value >= goal_angle:
-                gpio.output(self.turntable_motor_in1, gpio.LOW)
-                gpio.output(self.turntable_motor_in2, gpio.LOW)
-                break
+                counter += 1
+                print("{}   step count: {}".format(counter, encoder_value))
+                if encoder_value >= goal_angle:
+                    gpio.output(self.turntable_motor_in1, gpio.LOW)
+                    gpio.output(self.turntable_motor_in2, gpio.LOW)
+                    break
         
-        self.spi.xfer2(stop_counting)
+        self.spi.xfer2([4])
     gpio.cleanup()
 
 
