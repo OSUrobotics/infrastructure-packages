@@ -2,6 +2,7 @@
 
 int encoder_pin = 2;
 int steps = 0;
+int current_steps = 0;
 bool counting = false;
 volatile byte received = 0;
 byte Send_part1 = 0;
@@ -53,7 +54,7 @@ void loop() {
 
   delay(.001);
   Serial.print("cone button value"); Serial.print(cone_button_val); Serial.print("   hall effect value:"); Serial.print(hall_effect_val);
-  Serial.print("   encoder value"); Serial.print(steps); Serial.print("   limit switch value:"); Serial.println(limit_switch_val);
+  Serial.print("   encoder value"); Serial.print(current_steps); Serial.print("   limit switch value:"); Serial.println(limit_switch_val);
 //  if (counting == true)
 //  {
 //   Serial.print("number of steps"); Serial.println(steps); 
@@ -130,5 +131,6 @@ void step_counter()
   if (counting == true)
   {
     steps++;
+    current_steps = steps;
   }
 }
