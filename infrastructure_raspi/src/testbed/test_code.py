@@ -78,7 +78,7 @@ class testbed_test():
         encoder_val = 2
         get_val = 3
         # get_val_p2 = 4
-        stop_counting = 5
+        stop_counting = 4
 
         self.spi.xfer2([start_counting])
         sleep(0.0001)
@@ -118,8 +118,35 @@ class testbed_test():
             # print(gpio.input(self.hall_effect_pin))
 
             sleep(.01)
+    
+    def hall_effect_arduino(self):
+        counter = 0
 
+        self.spi.xfer2([5])
+        while True:
+            hall_val = self.spi.xfer2([5])
 
+            print("{} hall effect value: {}".format(counter, hall_val[0]))
+            counter += 1
+            sleep(.01)
+
+    def button_arduino(self):
+        counter = 0
+
+        self.spi.xfer2([6])
+        while True:
+            button_val = self.spi.xfer2([6])
+
+            print("{} button value: {}".format(counter, button_val[0]))
+
+    def limit_switch_aduino(self):
+        counter = 0
+
+        self.spi.xfer2([6])
+        while True:
+            limit_switch_val = self.spi.xfer2([6])
+
+            print("{} limit switch value: {}".format(counter, limit_switch_val[0]))
 
 if __name__ == '__main__':
     gpio.cleanup()
@@ -132,6 +159,9 @@ if __name__ == '__main__':
     4) stepper motor
     5) Arduino Communication
     6) hall effect sensor
+    7) hall effect arduino
+    8) button with arduino
+    9) limit switch arduino
 
     What do you want to test? (enter the number)
     """)
@@ -147,7 +177,16 @@ if __name__ == '__main__':
         test.talk_with_arduino()
     elif test_num == 6:
         test.hall_effect()
+    
+    elif test_num == 7:
+        test.hall_effect_arduino()
 
+    elif test_num == 8:
+        test.button_arduino()
+    
+    elif test_num == 9:
+        test.limit_switch_aduino()
+        
     elif test_num == 2:
         
         # try:
