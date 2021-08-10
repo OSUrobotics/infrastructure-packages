@@ -1,5 +1,5 @@
 from time import time, sleep
-import spidev
+import spidev 
 import RPi.GPIO as gpio
 
 
@@ -142,11 +142,12 @@ class testbed_test():
     def limit_switch_aduino(self):
         counter = 0
 
-        self.spi.xfer2([6])
+        self.spi.xfer2([7])
         while True:
-            limit_switch_val = self.spi.xfer2([6])
+            limit_switch_val = self.spi.xfer2([7])
 
             print("{} limit switch value: {}".format(counter, limit_switch_val[0]))
+            counter += 1
 
 if __name__ == '__main__':
     gpio.cleanup()

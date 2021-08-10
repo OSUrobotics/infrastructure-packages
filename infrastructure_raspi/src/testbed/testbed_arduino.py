@@ -21,7 +21,7 @@ class Testbed():  # this is a test
         
         self.cone_limit_switch = 17  # pin
         
-        self.lift_time_limit = 1.0  # seconds
+        self.lift_time_limit = 3.0  # seconds
         self.lower_time_limit = 2.0  # seconds
 
         #contact plates on the cone - like a button
@@ -101,10 +101,12 @@ class Testbed():  # this is a test
             time_duration = self.lift_time_limit
         start_time = time()
         lift_time = 0
+        self.spi.xfer2([7])
         while True:
-            button = gpio.input(self.cone_limit_switch)
-            if lift_time >= self.lift_time_limit or button == gpio.HIGH:
-                if button == gpio.HIGH:
+            # button = gpio.input(self.cone_limit_switch)
+            button = self.spi.xfer2([7])
+            if lift_time >= self.lift_time_limit or button[0] == 1:
+                if button[0] == 1:
                     print("button was pressed")
                 else:
                     print("time ran out")
@@ -131,10 +133,13 @@ class Testbed():  # this is a test
     def cable_reset_spool_in(self):
         start_time = time()
         spool_in_time = 0
+        self.spi.xfer2([6])
         while True:
-            pin_value = gpio.input(self.cone_button)
-            if spool_in_time >= self.spool_in_time_limit or pin_value == gpio.HIGH:
-                if pin_value == gpio.HIGH:
+
+            button_val = self.spi.xfer2([6])
+
+            if spool_in_time >= self.spool_in_time_limit or button_val[0] == 1:
+                if button_val[0] == 1:
                     print("button was pressed")
                 break
                 
@@ -153,7 +158,11 @@ class Testbed():  # this is a test
 
     def turntable_reset_home(self):
         delay = 0
-        if gpio.input(self.hall_effect) == gpio.LOW:  # ensures that it goes to the propper home orientation.
+        self.spi.xfer2([5])
+        sleep(.001)
+        hall_effect = self.spi.xfer2([5])
+
+        if hall_effect[0] == 0:  # ensures that it goes to the propper home orientation.
             delay = 2
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
@@ -161,9 +170,11 @@ class Testbed():  # this is a test
         sleep(delay)
         
         while True:
-            if gpio.input(self.hall_effect) == gpio.LOW:
+            hall_effect = self.spi.xfer2([5])
+            if hall_effect[0] == 0:
                 gpio.output(self.turntable_motor_in1, gpio.LOW)
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
+                print("magnet detected")
                 break
             sleep(0.001)
 
@@ -200,6 +211,7 @@ class Testbed():  # this is a test
                 break
         
         self.spi.xfer2(stop_counting)
+    gpio.cleanup()
 
 
 
