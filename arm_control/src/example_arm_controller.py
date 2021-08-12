@@ -20,6 +20,7 @@ class ExampleArmController():
 		###do any arm calls or work here
 
                 #pseudo timer
+                user_in = raw_input("press key")
 		time.sleep(5)
 		self.start_arm.set_succeeded(StageResult(result = 0), text="SUCCESS")
 
