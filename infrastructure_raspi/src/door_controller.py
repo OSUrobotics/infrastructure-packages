@@ -3,7 +3,7 @@
 
 # Main controller node
 #
-# drawer_controller.py
+# door_controller.py
 #
 # Author: Ryan Roberts
 #
