@@ -12,6 +12,6 @@
 
 <node pkg="infrastructure_raspi" name="door_controller" type="door_controller.py" output="screen" if="$(eval arg('apparatus') == 'door')"/>
 
-<node pkg="infrastructure_raspi" name="testbed_controller" type="testbed_controller.py" output="screen" if="$(eval arg('apparatus') == 'tesbed')"/>
+<node pkg="infrastructure_raspi" name="testbed_controller" type="testbed_controller.py" output="screen" if="$(eval arg('apparatus') == 'testbed')"/>
 
 </launch>
