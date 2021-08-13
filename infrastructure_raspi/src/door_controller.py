@@ -48,7 +48,7 @@ class HardwareController():
                 #format message. can be more optimized (and more feedback messages) if we integrate hardware class with controller
                 data_point = self.hardware.collect_data()
                 data_message.current_time = rospy.Time.now()
-                data_message.tof = data_point.tof
+                data_message.tof = data_point.angle
                 #computationally faster than using for loop with string concatenation
                 data_message.fsr1 = data_point.handle_data[0]
                 data_message.fsr2 = data_point.handle_data[1]
@@ -70,7 +70,7 @@ class HardwareController():
             else:
                 if(not self.is_set):
                     sleep(2)
-        #runs after node is closed
+        #runs after ros is closed
         gpio.cleanup()
 
     def parameter_callback(self, goal):
