@@ -63,7 +63,7 @@ class HardwareController():
                 data_message.fsr11 = data_point.handle_data[10]
                 data_message.fsr12 = data_point.handle_data[11]
                 data_message.fsr_contact_1 = data_point.handle_data[12]
-                data_message.fsr_contact_2 = data_point.handle_date[13]
+                data_message.fsr_contact_2 = data_point.handle_data[13]
                 self.data_pub.publish(data_message)
                 self.rate.sleep()
                 self.is_set = False
