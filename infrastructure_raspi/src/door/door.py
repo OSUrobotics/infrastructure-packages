@@ -42,6 +42,7 @@ class Door:
         gpio.output(self.in3, 0)
         gpio.output(self.in4, 0)
         self.reset_pwm = gpio.PWM(self.enB, self.reset_freq)
+        self.reset_pwm.start(0)
         self.magnet_pwm = gpio.PWM(self.magnet_pin, self.magnet_freq)
         self.magnet_pwm.start(self.magnet_dc)
     
@@ -82,7 +83,8 @@ class Door:
         self.__reset_friction()
         did_move = False
         end_pos = self.start_pos - self.dis_buffer
-        self.reset_pwm.start(self.reset_dc)
+        #self.reset_pwm.start(self.reset_dc)
+        self.reset_pwm.ChangeDutyCycle(self.reset_dc)
         gpio.output(self.in3, 0)
         gpio.output(self.in4, 1)
         while(True):
@@ -95,7 +97,8 @@ class Door:
             sleep(self.time_unwind)
         gpio.output(self.in3, 0)
         gpio.output(self.in4, 0)
-        self.reset_pwm.stop()
+        self.reset_pwm.ChangeDutyCycle(0)
+        #self.reset_pwm.stop()
      
     def __del__(self):
         gpio.cleanup()
