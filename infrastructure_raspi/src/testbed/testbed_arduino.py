@@ -12,7 +12,7 @@ class Testbed():  # this is a test
         
         
         # Variables for moving cone up and down
-        self.reset_cone_pul = 19 # pin
+        self.reset_cone_pul = 16 # pin
         self.reset_cone_dir = 20  # pin
         self.reset_cone_en = 12  # pin  (HIGH to Enable / LOW to Disable)
 
@@ -29,7 +29,7 @@ class Testbed():  # this is a test
 
 
         # Variables for spooling in/out the cable
-        self.reset_cable_pul = 16 # pin Green wire
+        self.reset_cable_pul = 19 # pin Green wire
         self.reset_cable_dir = 6 # pin 31 Red wire
         self.reset_cable_en = 5 # pin 29 Blue wire (HIGH to Enable / LOW to Disable)
         self.reset_cable_speed = 0.00001  # default value
