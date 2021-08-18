@@ -51,9 +51,8 @@ class Testbed():  # this is a test
 
         self.spi_bus = 0
         self.spi_device = 0
+        self.spi_device_2 = 1
         self.spi = spidev.SpiDev()
-        self.spi.open(self.spi_bus, self.spi_device)
-        self.spi.max_speed_hz = 1000000
 
         # Setting up the pins
         gpio.setwarnings(False)
@@ -100,6 +99,8 @@ class Testbed():  # this is a test
 
 
     def cone_reset_up(self, time_duration=None):
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
         if time_duration == None:
             time_duration = self.lift_time_limit
         start_time = time()
@@ -116,8 +117,11 @@ class Testbed():  # this is a test
                 break
             self.reset_cone_motor.move_for(0.001, self.reset_cone_motor.CCW)
             lift_time = time() - start_time
+        self.spi.close()
 
     def cone_reset_down(self, time_duration=None):  # look at switching to steps moved
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
         if time_duration == None:
             time_duration = self.lower_time_limit
         start_time = time()
@@ -127,6 +131,7 @@ class Testbed():  # this is a test
                 break
             self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CW)
             lower_time = time() - start_time
+        self.spi.close()
 
 #    def reset_turntable(self):
 #        while True:
@@ -134,6 +139,8 @@ class Testbed():  # this is a test
 #        pass
 
     def cable_reset_spool_in(self):
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
         start_time = time()
         spool_in_time = 0
         self.spi.xfer2([6])
@@ -148,9 +155,12 @@ class Testbed():  # this is a test
                 
             self.reset_cable_motor.move_for(0.001, self.reset_cable_motor.CCW)  # check rotations
             spool_in_time = time() - start_time
+        self.spi.close()
         
 
     def cable_reset_spool_out(self):
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
         start_time = time()
         spool_out_time = 0
         while True:
@@ -158,8 +168,11 @@ class Testbed():  # this is a test
                 break
             self.reset_cable_motor.move_for(0.1, self.reset_cable_motor.CW)  # check rotations
             spool_out_time = time() - start_time
-
+        self.spi.close()
+    
     def turntable_reset_home(self):
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
         delay = 0
         self.spi.xfer2([5])
         sleep(.001)
@@ -180,9 +193,12 @@ class Testbed():  # this is a test
                 print("magnet detected")
                 break
             sleep(0.001)
+        self.spi.close()
 
     def turntable_move_angle(self, goal_angle=20):
-
+        self.spi.open(self.spi_bus, self.spi_device)
+        self.spi.max_speed_hz = 1000000
+        
         # tell the arduino to start counting
         start_counting = 1
         encoder_val = 2
@@ -221,9 +237,29 @@ class Testbed():  # this is a test
                     break
         
         self.spi.xfer2([4])
+        self.spi.close()
     gpio.cleanup()
 
-
+    def object_swap(self):
+        self.spi.open(self.spi_bus, self.spi_device_2)
+        self.spi.max_speed_hz = 1000000
+        start_command = 1
+        pull_command = 2
+        switch_command = 4
+        self.spi.xfer2(start_command)
+        self.spi.xfer2([pull_command])
+        while self.spi.xfer2([pull_command]) < 3:
+            sleep(0.0001)
+        self.spi.close()
+        reset_testbed.cable_reset_spool_in()
+        reset_testbed.cone_reset_up()
+        reset_testbed.cable_reset_spool_in()
+        self.spi.open(self.spi_bus, self.spi_device_2)
+        self.spi.max_speed_hz = 1000000
+        self.spi.xfer2([switch_command])
+        while self.spi.xfer2([pull_command]) < 5:
+            sleep(0.0001)
+        self.spi.close()
 
 if __name__ == '__main__':
 
@@ -235,6 +271,7 @@ if __name__ == '__main__':
 4) cone_down
 5) turntable_home
 6) turntable_angle
+7) object_swap
 
 What do you want to test? (enter the number)
 """)
@@ -263,5 +300,7 @@ What do you want to test? (enter the number)
     elif test_num == 6:
         angle = input("\nwhat angle do you want to rotate by?  (Degrees)\n")
         reset_testbed.turntable_move_angle(angle)
+    elif test_num == 7:
+        reset_testbed.object_swap()
     else:
         print("\nNot implemented\n")

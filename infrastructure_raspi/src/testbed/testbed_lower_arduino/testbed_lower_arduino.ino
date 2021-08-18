@@ -1,6 +1,6 @@
 #include <SPI.h>
 
-int encoder_pin = 2;
+int encoder_pin = 18;
 int steps = 0;
 int current_steps = 0;
 bool counting = false;
@@ -11,23 +11,26 @@ int current_step = 0;
 volatile byte current_step_part1 = 0;
 volatile byte current_step_part2 = 0;
 
-const int hall_effect_pin = 0;
+const int hall_effect_pin = 21;
 bool hall_effect_val = HIGH;
 
-const int cone_button_pin = 1;
+const int cone_button_pin = 2;
 bool cone_button_val = LOW;
 
-const int limit_switch_pin = 3;
+const int limit_switch_pin = 19;
 bool limit_switch_val = LOW;
 
 void setup() {
   // put your setup code here, to run once:
-
+Serial.begin(57600);
   pinMode(encoder_pin, INPUT);
+  pinMode(cone_button_pin, INPUT);
+    pinMode(hall_effect_pin, INPUT);
+
   pinMode(MISO, OUTPUT);
   SPCR |= _BV(SPE);
   SPI.attachInterrupt();
-  attachInterrupt(digitalPinToInterrupt(encoder_pin), step_counter, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoder_pin), step_counter    , CHANGE);
   attachInterrupt(digitalPinToInterrupt(hall_effect_pin), hall_effect, CHANGE);
   attachInterrupt(digitalPinToInterrupt(cone_button_pin), cone_button, CHANGE);
   attachInterrupt(digitalPinToInterrupt(limit_switch_pin), limit_switch, CHANGE);
