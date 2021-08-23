@@ -244,22 +244,29 @@ class Testbed():  # this is a test
         self.spi.open(self.spi_bus, self.spi_device_2)
         self.spi.max_speed_hz = 1000000
         start_command = 1
+        return_value = 0
         pull_command = 2
         switch_command = 4
-        self.spi.xfer2(start_command)
+        self.spi.xfer2([start_command])
         self.spi.xfer2([pull_command])
-        while self.spi.xfer2([pull_command]) < 3:
+        while True:
             sleep(0.0001)
+            
+            return_value = self.spi.xfer2([2])
+            print(return_value[0])
+            if return_value[0] == 3:
+                
+                break
         self.spi.close()
-        reset_testbed.cable_reset_spool_in()
-        reset_testbed.cone_reset_up()
-        reset_testbed.cable_reset_spool_in()
-        self.spi.open(self.spi_bus, self.spi_device_2)
-        self.spi.max_speed_hz = 1000000
-        self.spi.xfer2([switch_command])
-        while self.spi.xfer2([pull_command]) < 5:
-            sleep(0.0001)
-        self.spi.close()
+        # reset_testbed.cable_reset_spool_in()
+        # reset_testbed.cone_reset_up()
+        # reset_testbed.cable_reset_spool_in()
+        # self.spi.open(self.spi_bus, self.spi_device_2)
+        # self.spi.max_speed_hz = 1000000
+        # self.spi.xfer2([switch_command])
+        # while self.spi.xfer2([pull_command]) < 5:
+        #     sleep(0.0001)
+        # self.spi.close()
 
 if __name__ == '__main__':
 
