@@ -28,7 +28,7 @@ class Door:
         self.reset_freq = 100
         self.time_unwind = 2 #seconds
         self.reset_dc = 20 #speed of motor
-        self.dis_buffer = 3 #buffer value for resetting drawer (in deg)
+        self.dis_buffer = 1 #buffer value for resetting drawer (in deg)
         #magnet controller
         self.magnet_freq = 200 #not finalized
         self.magnet_dc = 0 #to initialize magnets off
