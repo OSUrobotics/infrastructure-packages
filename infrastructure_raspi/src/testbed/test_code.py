@@ -122,7 +122,6 @@ class testbed_test():
     def hall_effect_arduino(self):
         counter = 0
 
-        self.spi.xfer2([5])
         while True:
             hall_val = self.spi.xfer2([5])
 
