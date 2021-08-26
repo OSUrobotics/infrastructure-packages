@@ -1,11 +1,15 @@
 from time import time, sleep
 import spidev 
 import RPi.GPIO as gpio
-
+import sys
+import smbus2 as smbus#,smbus2
 
 class testbed_test():
     def __init__(self):
         
+        # Slave Addresses
+        self.I2C_SLAVE_ADDRESS = 12 #0x0b ou 11
+        self.I2C_SLAVE2_ADDRESS = 13
         # self.button_pin = 24
         self.button_pin = 14
 
@@ -39,6 +43,15 @@ class testbed_test():
         self.spi.open(self.spi_bus, self.spi_device)
         self.spi.max_speed_hz = 1000000
 
+    def ConvertStringsToBytes(self, src):
+        self.converted = []
+        try:  
+            for b in src:
+                self.converted.append(ord(b))
+            return self.converted
+        except:
+            self.converted.append(ord(src))
+            return self.converted
 
     def button_test(self):
         i = 0
@@ -120,14 +133,31 @@ class testbed_test():
             sleep(.01)
     
     def hall_effect_arduino(self):
-        counter = 0
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            sleep(0.001)
+            # self.BytesToSend = self.ConvertStringsToBytes("5")
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
+                    sleep(1)
 
-        while True:
-            hall_val = self.spi.xfer2([5])
-
-            print("{} hall effect value: {}".format(counter, hall_val[0]))
-            counter += 1
-            sleep(.01)
+            while True:
+                try:
+                    data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    print("recieve from slave:")
+                    print(data)
+                    sleep(.01)
+                except:
+                    print("remote i/o error")
+                    sleep(2)
+        return 0
 
     def button_arduino(self):
         counter = 0

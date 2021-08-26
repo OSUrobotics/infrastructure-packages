@@ -7,8 +7,8 @@ import sys
 import smbus2 as smbus#,smbus2
 import time
 # Slave Addresses
-I2C_SLAVE_ADDRESS = 11 #0x0b ou 11
-I2C_SLAVE2_ADDRESS = 12
+I2C_SLAVE_ADDRESS = 12 #0x0b ou 11
+I2C_SLAVE2_ADDRESS = 13
 # This function converts a string to an array of bytes.
 def ConvertStringsToBytes(src):
     converted = []
@@ -42,7 +42,7 @@ def main(args):
         print(BytesToSend )
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, BytesToSend)
         time.sleep(0.5)
-        while True:
+        while True: 
             try:
                 data=I2Cbus.read_i2c_block_data(slaveAddress,0x00,1)
                 print("recieve from slave:")

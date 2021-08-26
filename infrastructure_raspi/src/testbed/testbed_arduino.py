@@ -5,12 +5,16 @@ from time import time, sleep
 import spidev
 import RPi.GPIO as gpio
 from stepper_motor import StepperMotor
+import sys
+import smbus2 as smbus#,smbus2
 
 class Testbed():  # this is a test
 
     def __init__(self):
         
-        
+        # Slave Addresses
+        self.I2C_SLAVE_ADDRESS = 12 #0x0b ou 11
+        self.I2C_SLAVE2_ADDRESS = 13
         # Variables for moving cone up and down
         self.reset_cone_pul = 16 # pin
         self.reset_cone_dir = 20  # pin
@@ -84,8 +88,25 @@ class Testbed():  # this is a test
         # sets up the stepper motors
         self.reset_cone_motor = StepperMotor(self.reset_cone_pul, self.reset_cone_dir, self.reset_cone_en, self.reset_cone_speed)
         self.reset_cable_motor = StepperMotor(self.reset_cable_pul, self.reset_cable_dir, self.reset_cable_en, self.reset_cable_speed)
+    def ConvertStringsToBytes(self, src):
+        self.converted = []
+        try:  
+            for b in src:
+                self.converted.append(ord(b))
+            return self.converted
+        except:
+            self.converted.append(ord(src))
+            return self.converted
 
-
+    def ConvertStringsToBytes(self, src):
+        converted = []
+        try:  
+            for b in src:
+                converted.append(ord(b))
+            return converted
+        except:
+            converted.append(ord(src))
+            return converted
 
     def testbed_reset(self, angle=None):
 
@@ -99,18 +120,16 @@ class Testbed():  # this is a test
 
 
     def cone_reset_up(self, time_duration=None):
-        self.spi.open(self.spi_bus, self.spi_device)
-        self.spi.max_speed_hz = 1000000
         if time_duration == None:
             time_duration = self.lift_time_limit
         start_time = time()
         lift_time = 0
-        self.spi.xfer2([7])
+        I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, 7)
         while True:
             # button = gpio.input(self.cone_limit_switch)
-            button = self.spi.xfer2([7])
+            button = I2Cbus.read_i2c_block_data(self.I2C_SLAVE_ADDRESS,0x00,1)
             if lift_time >= self.lift_time_limit or button[0] == 1:
-                if button[0] == 1:
+                if button == 1:  
                     print("button was pressed")
                 else:
                     print("time ran out")
