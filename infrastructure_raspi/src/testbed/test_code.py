@@ -8,8 +8,8 @@ class testbed_test():
     def __init__(self):
         
         # Slave Addresses
-        self.I2C_SLAVE_ADDRESS = 12 #0x0b ou 11
-        self.I2C_SLAVE2_ADDRESS = 13
+        self.I2C_SLAVE_ADDRESS = 15 #0x0b ou 11
+        self.I2C_SLAVE2_ADDRESS = 14
         # self.button_pin = 24
         self.button_pin = 14
 
@@ -85,41 +85,101 @@ class testbed_test():
     def motor_with_encoder(self):
         pass
 
-    def talk_with_arduino(self, angle=10):
+    def talk_with_arduino(self, angle=360):
 
-        start_counting = 1
-        encoder_val = 2
-        get_val = 3
-        # get_val_p2 = 4
-        stop_counting = 4
-
-        self.spi.xfer2([start_counting])
-        sleep(0.0001)
-
-        while True:
-
-            # encoder_val = [2]
-            # get_val_p1 = [3]
-            # get_val_p2 = [4]
-            # stop_counting = [5]
-
-            self.spi.xfer2([encoder_val])
-            sleep(0.0001)
-            encoder_value_part1 = self.spi.xfer2([get_val])
-            sleep(0.0001)
-            encoder_value_part2 = self.spi.xfer2([0])
-            sleep(0.0001)
-
-            value_part1 = encoder_value_part1[0] << 8
-            encoder_value = value_part1 + encoder_value_part2[0]
-
-            print(encoder_value)
-
-            if encoder_value >= angle:
-                
-                break
-        
-        self.spi.xfer2([stop_counting])
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            
+            sleep(0.001)
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [2])
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [2])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(.5)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [2])
+                    sleep(.5)
+            while True:
+                try:
+                    self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    break
+                except:
+                    print("remote i/o error")
+                    sleep(.1)
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(.5)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
+                    sleep(.5)
+            while True:
+                try:                    
+                    first_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    sleep(.01)
+                    second_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    encoder_value = (first_byte<< 8) + (second_byte)
+                    print("recieve from slave:")
+                    print(encoder_value)
+                    sleep(.01)
+                    if encoder_value >= angle:
+                        break
+                except:
+                    print("remote i/o error")
+                    while True:
+                        try:
+                            sleep(0.1)
+                            self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [8])
+                            sleep(0.1)
+                            break
+                        except:
+                            sleep(.5)
+                            self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [8])
+                            sleep(.5)
+                    while True:
+                        try:
+                            self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                            break
+                        except:
+                            print("remote i/o error")
+                            sleep(.1)
+                    while True:
+                        try:
+                            sleep(0.1)
+                            self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
+                            sleep(0.1)
+                            break
+                        except:
+                            sleep(.5)
+                            self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
+                            sleep(.5)
+                    sleep(.1)
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [7])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(.5)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [7])
+                    sleep(.5)
+            while True:
+                try:
+                    self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    break
+                except:
+                    print("remote i/o error")
+                    sleep(.1)
+            
+        return 0
 
     def hall_effect(self):
         counter = 0
@@ -144,9 +204,9 @@ class testbed_test():
                     sleep(0.1)
                     break
                 except:
-                    sleep(1)
+                    sleep(.5)
                     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
-                    sleep(1)
+                    sleep(.5)
 
             while True:
                 try:
@@ -156,27 +216,66 @@ class testbed_test():
                     sleep(.01)
                 except:
                     print("remote i/o error")
-                    sleep(2)
+                    sleep(.1)
         return 0
 
     def button_arduino(self):
-        counter = 0
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            sleep(0.001)
+            # self.BytesToSend = self.ConvertStringsToBytes("5")
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [4])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(.2)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [4])
+                    sleep(.2)
 
-        self.spi.xfer2([6])
-        while True:
-            button_val = self.spi.xfer2([6])
-
-            print("{} button value: {}".format(counter, button_val[0]))
+            while True:
+                try:
+                    sleep(0.01)
+                    data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    print("recieve from slave:")
+                    print(data)
+                    sleep(.01)
+                except:
+                    print("remote i/o error")
+                    sleep(.1)
+        return 0
 
     def limit_switch_aduino(self):
-        counter = 0
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            sleep(0.001)
+            # self.BytesToSend = self.ConvertStringsToBytes("5")
+            while True:
+                try:
+                    sleep(0.1)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [3])
+                    sleep(0.1)
+                    break
+                except:
+                    sleep(.2)
+                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [3])
+                    sleep(.2)
 
-        self.spi.xfer2([7])
-        while True:
-            limit_switch_val = self.spi.xfer2([7])
-
-            print("{} limit switch value: {}".format(counter, limit_switch_val[0]))
-            counter += 1
+            while True:
+                try:
+                    sleep(0.01)
+                    data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                    print("recieve from slave:")
+                    print(data)
+                    sleep(.01)
+                except:
+                    print("remote i/o error")
+                    sleep(.01)
+        return 0
+def on_exit(sig, func=None):
+        gpio.cleanup()
 
 if __name__ == '__main__':
     gpio.cleanup()
