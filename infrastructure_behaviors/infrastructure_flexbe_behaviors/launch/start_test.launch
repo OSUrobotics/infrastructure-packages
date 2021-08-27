@@ -1,6 +1,5 @@
 <launch>
 
-<arg name="hardware" default="false"/>
 <arg name="collect_data" default="false"/>
 <arg name="video" default="false"/>
 <arg name="name" default = "infrastructure_trial"/>
@@ -17,15 +16,12 @@
 
 
 <node pkg="rosbag" type="record" name="rosbag_record_sensors"
-       args="record -o $(find data_collection)/stored_data/rosbags/$(arg test_name) -e '(.*)_infsensor'" if="$(arg collect_data)"/>  
+       args="record -o $(find data_collection)/stored_data/rosbags/$(arg name) -e '(.*)_infsensor'" if="$(arg collect_data)"/>  
 
 <node pkg="rosbag" type="record" name="rosbag_record_timestamps"
        args="record -o $(find data_collection)/stored_data/rosbags/timestamps -e '(.*)_timestamps'" if="$(arg collect_data)"/>  
 
 <node pkg="data_collection" name="data_collection" type="data_collection.py" output="screen"/>
-
-<node pkg="infrastructure_raspi" name="reset" type="reset.py" output="screen" if="$(eval arg('hardware') == 0)"/>
-<node pkg="infrastructure_raspi" name="test_parameters" type="test_parameters.py" output="screen" if="$(eval arg('hardware') == 0)"/>
 
 <node pkg="arm_control" name="example_arm_controller" type="example_arm_controller.py" output="screen"/>
 

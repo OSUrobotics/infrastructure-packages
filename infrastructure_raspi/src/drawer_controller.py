@@ -12,9 +12,11 @@
 import rospy
 import sys
 import actionlib
+import os
 import RPi.GPIO as gpio
 from time import sleep
 from drawer.drawer import Drawer
+from collections import deque
 
 #messages
 from infrastructure_msgs.msg import TestParametersAction, TestParametersGoal, TestParametersFeedback, TestParametersResult
@@ -40,6 +42,11 @@ class HardwareController():
         self.rate = rospy.Rate(35)
         self.collect_data = False
         self.is_set = False
+        #duplicate of data_collection
+        self.trial_count = 0
+        self.data_path = "~/remhome/Documents/drawer_tests/test1/" #use test_name parameter?
+        self.trial_name = "drawer_trial" #replace with parameter name from launch file
+        self.trial_data = deque()
         
         while not rospy.is_shutdown():
             if(self.collect_data):
@@ -65,6 +72,7 @@ class HardwareController():
                 data_message.fsr_contact_1 = -1
                 data_message.fsr_contact_2 = -1
                 self.data_pub.publish(data_message)
+                self.trial_data.append(data_message)
                 self.rate.sleep()
                 self.is_set = False
             else:
@@ -86,6 +94,25 @@ class HardwareController():
         try:
 	    self.reset_as.publish_feedback(StageFeedback(status="Resetting Drawer"))
             self.hardware.reset()
+	    
+            self.reset_as.publish_feedback(StageFeedback(status="Making CSV file"))
+            if(not path.os.exists(self.data_path)):
+                os.makedirs(self.data_path)
+            f_name = self.trial_name + str(self.trial_count) + ".csv"
+            f = self.data_path + f_name
+            self.reset_as.publish_feedback(StageFeedback(status="Writing data into CSV file"))
+            trial_f = open(f, "w")
+            n = "init"
+            while(True):
+                try:
+                    n = self.trial_data.pop()
+                except IndexError:
+                    break
+                trial_f.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {} ,{}, {}, {}, {}, {}, {}\n".format(n.tof, n.fsr1, 
+                    n.fsr2, n.fsr3, n.fsr4, n.fsr5, n.fsr6, n.fsr7, n.fsr8, n.fsr9, n.fsr10, n.fsr11, n.fsr12, 
+                        n.fsr_contact_1, n.fsr_contact_2, n.current_time))
+            trial_f.close()
+
 	    self.reset_as.set_succeeded(StageResult(result=0), text="SUCCESS")
         except:
 	    self.reset_as.set_aborted(StageResult(result=100), text="FAILED")
@@ -94,6 +121,7 @@ class HardwareController():
         self.is_set = True
 
     def start_data_callback(self, msg):
+        self.trial_count += 1
         self.collect_data = True
 
     def stop_data_callback(self, msg):
