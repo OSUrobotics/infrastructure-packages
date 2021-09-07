@@ -226,14 +226,14 @@ class testbed_test():
             # self.BytesToSend = self.ConvertStringsToBytes("5")
             while True:
                 try:
-                    sleep(0.1)
+                    sleep(0.01)
                     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [4])
-                    sleep(0.1)
+                    sleep(0.01)
                     break
                 except:
-                    sleep(.2)
+                    sleep(.02)
                     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [4])
-                    sleep(.2)
+                    sleep(.02)
 
             while True:
                 try:
@@ -244,7 +244,7 @@ class testbed_test():
                     sleep(.01)
                 except:
                     print("remote i/o error")
-                    sleep(.1)
+                    sleep(.01)
         return 0
 
     def limit_switch_aduino(self):
