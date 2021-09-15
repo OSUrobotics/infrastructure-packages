@@ -104,16 +104,16 @@ class Testbed():  # this is a test
                 except:
                     sleep(.001)
 
-    def testbed_reset(self, angle=None):
+    def testbed_reset(self, angle=0):
 
         self.cone_reset_up()
         self.cable_reset_spool_in()
-        sleep(1)
+        sleep(.25)
         self.cable_reset_spool_out(self.spool_out_time_limit)
         self.cone_reset_down()
-        # self.cable_reset_spool_out()
         self.turntable_reset_home()
-        #self.turntable_move_angle(356)
+        if angle:
+            self.turntable_move_angle(angle)
 
 
     def cone_reset_up(self, time_duration=None):
@@ -245,16 +245,34 @@ class Testbed():  # this is a test
             self.send_transmission(7,self.I2C_SLAVE_ADDRESS)
             self.read_transmission(self.I2C_SLAVE_ADDRESS)
             gpio.cleanup()
-
-    def object_swap(self):
+    def data_transfer(self, data):
         self.I2Cbus = smbus.SMBus(1)
-        with smbus.SMBus(1) as I2Cbus: 
+        with smbus.SMBus(1) as I2Cbus:
+            for num in data:
+                if num == 0:
+                    self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission(9,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                else:
+                    self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission(num,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+            
+    def object_swap(self, objects_index):
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            data =  [18,0,37,0,0,0]
+            self.data_transfer(data)
+            self.send_swap_data(objects_index)
             return_value = 0
-            print("Made it 1")
             self.send_transmission(2,self.I2C_SLAVE2_ADDRESS)
-            print("Made it 2")
             return_value = self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-            print("Made it 3")
             self.send_transmission(3,self.I2C_SLAVE2_ADDRESS)
             self.send_transmission(3,self.I2C_SLAVE2_ADDRESS)
 
@@ -287,8 +305,63 @@ class Testbed():  # this is a test
             reset_testbed.cone_reset_down()
             reset_testbed.cable_reset_spool_out(self.spool_out_time_limit)
             reset_testbed.turntable_reset_home()
+    def get_user_params(self):
+        repeat_bool = 1
+        num_of_resets = 0
+        current_action_list = []
+        while repeat_bool:
+            num_of_resets = 0
+            num_of_degrees = 0
+            swap_bool = 0
+            first_object=0
+            second_object=0
 
-
+            num_of_resets = input("\nHow many resets would you like?\n")
+            if num_of_resets != 0:
+                num_of_degrees = input("\nHow many degrees would you like for each reset?\n")
+            swap_bool = input("\nWould you like to swap objects? (1 for yes, 0 for no)\n")
+            if swap_bool:
+                first_object = input("\nWhich object would you like to grab first?\n")
+                second_object = input("\nWhich object would you like to swap it with?\n")
+            if num_of_resets != 0:
+                print("\nYou have ", num_of_resets, "number of resets\n")
+                print("\nAt an angle of ", num_of_degrees," degrees \n")
+            else:
+                print("\nYou have no resets\n")
+            if swap_bool:
+                print("\nAnd you have swaps between objects in location ", first_object, "and ", second_object, "\n")
+            else:
+                print("\nAnd no swaps\n")
+            current_action = [num_of_resets,num_of_degrees,swap_bool,first_object,second_object]
+            current_action_list.extend(current_action)
+            repeat_bool = input("\nDo you have more actions? (1 for yes, 0 for no)\n")
+        return current_action_list
+    def action_caller(self, action_list):
+        current_list = []
+        if not action_list:
+            return
+        for x in range(0,4):
+            current_list.append(action_list[0])
+            action_list.pop(0)
+        if current_list[0] != 0:
+            for x in range(1,current_list[0]):
+                waiting = input("\n On reset ", x, "of ",current_list[0], "Type an input to start next reset \n")
+                reset_testbed.testbed_reset(current_list[1])
+        if current_list[2]:
+            reset_testbed.send_swap_data(current_list[3,4])
+            reset_testbed.object_swap()
+        reset_testbed.action_caller(action_list)
+    def send_swap_data(self, swap_list):
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            for num in swap_list:
+                    self.send_transmission(10,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission((num+100),self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    self.send_transmission(11,self.I2C_SLAVE2_ADDRESS)
+                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+        return
 def on_exit(self, sig, func=None):
         gpio.cleanup()
         gpio.output(self.turntable_motor_in1, gpio.LOW)
@@ -296,14 +369,13 @@ def on_exit(self, sig, func=None):
 if __name__ == '__main__':
 
     test_num = input("""
-0) full table reset
+0) Resets or Swaps
 1) spool_out
 2) spool_in
 3) cone_up
 4) cone_down
 5) turntable_home
 6) turntable_angle
-7) object_swap
 
 What do you want to test? (enter the number)
 """)
@@ -311,8 +383,8 @@ What do you want to test? (enter the number)
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.testbed_reset()
-
+        current_action_list = reset_testbed.get_user_params()
+        reset_testbed.action_caller(current_action_list)
     elif test_num == 1:
 
         reset_testbed.cable_reset_spool_out(4.5)
@@ -332,7 +404,6 @@ What do you want to test? (enter the number)
     elif test_num == 6:
         angle = input("\nwhat angle do you want to rotate by?  (Degrees)\n")
         reset_testbed.turntable_move_angle(angle)
-    elif test_num == 7:
-        reset_testbed.object_swap()
+
     else:
         print("\nNot implemented\n")
