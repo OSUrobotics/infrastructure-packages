@@ -44,7 +44,7 @@ class HardwareController():
         self.is_set = False
         #duplicate of data_collection
         self.trial_count = 0
-        self.data_path = "~/remhome/Documents/drawer_tests/test1/" #use test_name parameter?
+        self.data_path = "/home/ubuntu/remhome/Documents/drawer_tests/test1/" #use test_name parameter? make path dynamic
         self.trial_name = "drawer_trial" #replace with parameter name from launch file
         self.trial_data = deque()
         
