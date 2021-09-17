@@ -201,8 +201,7 @@ class Testbed():  # this is a test
         
         self.spi.xfer2(stop_counting)
 
-
-
+    
 if __name__ == '__main__':
 
     test_num = input("""
