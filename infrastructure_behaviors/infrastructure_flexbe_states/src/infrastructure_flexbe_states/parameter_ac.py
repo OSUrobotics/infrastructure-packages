@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from flexbe_core import EventState, Logger
 from flexbe_core.proxy import ProxyActionClient
+import rosnode
+import csv
+import copy
 
 # example import of required action
 from infrastructure_msgs.msg import TestParametersAction, TestParametersGoal
@@ -29,8 +32,19 @@ class ParameterActionClient(EventState):
         self._topic = topic
         self._client = ProxyActionClient({self._topic: TestParametersAction})
 
-		# It may happen that the action client fails to send the action goal.
+	# It may happen that the action client fails to send the action goal.
         self._error = False
+
+        #temporary user interface for inputting test parameters
+        self.trial_count = 0
+        self.test_count = 0
+        self.read_csv = False
+        self.tests = []
+        self.params = {
+                "object" : 0,
+                "angle" : 0,
+                "trials" : 0
+                }
 
 
     def execute(self, userdata):
@@ -53,7 +67,29 @@ class ParameterActionClient(EventState):
     def on_enter(self, userdata):
         #Creating the goal to send for testing
         goal = TestParametersGoal()
-        goal.parameters = [1,2,3]
+        
+        #for testbed. Name of file to be read: parameters.csv
+        self.trial_count = self.trial_count + 1
+        if(rosnode.rosnode_ping("testbed_controller", max_count=10)):
+            if(not self.read_csv):
+                with open('parameters.csv', mode='r') as f:
+                    reader = csv.reader(f, delimiter=' ', quotechar='|')
+                    for row in reader:
+                        parsed_row = row[0].split(",")
+                        self.params["object"] = int(parsed_row[0])
+                        self.params["angle"] = int(parsed_row[1])
+                        self.params["trials"] = int(parsed_row[2])
+                        self.tests.append(copy.deepcopy(params))
+                self.read_csv = True
+            current_test = self.tests[self.test_count]
+            if(self.trial_count == current_test["trials"]):
+                self.test_count = self.test_count + 1
+                self.trial_count = 0
+            goal.parameters = [current_test["object"], current_test["angle"]]
+
+        #for door/drawer
+        else:
+            goal.parameters = [1,2,3]
 
         #error checking in case communication cant be established
         try:
