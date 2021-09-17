@@ -4,12 +4,13 @@
 #include <Wire.h>
 int I2C_SLAVE2 = 14;
 /***************************************************************************************************************************************************************/
-
+//vetical steps per inch (1,119.8)
 //Variable Declarations
 volatile byte received = 0;
 volatile byte initial_received = 0;
 int n = 10;
-float object_array[6];
+const int num_of_object_locations = 5;
+float object_array[num_of_object_locations];
 int swap_array[2];
 bool data_transfer = false;
 float transferred_data = 0;
@@ -37,12 +38,10 @@ int magnetEN = 11;
 
 
 //Height and misc variables
-int vertical_level_1_position;
-int vertical_level_2_position;
-int vertical_level_3_position;
-int bed_level;
-int object_height_offset;
-int inch_to_position_conversion;
+int vertical_level_1_position = 9012;
+int bed_level = 4213;
+int object_height_offset = 1500;
+int inch_to_position_conversion_vertical = 1120;
 int middle_horizontal_position;
 
 //limit switch analog pins
@@ -132,48 +131,71 @@ digitalWrite(magnetIn1, LOW);
 digitalWrite(magnetIn2, LOW);
 }
 /***************************************************************************************************************************************************************/
-void grab_Object(){
+int find_horizontal_drop_location(float object_array[], int location){
+  float var = 1;
+  int j = 1;
+  
+  for (j = 1; j< (sizeof(object_array)/sizeof(float)); j++){
+    var = object_array[j];
+    if (int(var) == 0)
+      break;
+  }
+  return find_horizontal_pickup_location(j);
+}
+int find_horizontal_pickup_location(int location){
+  if (location = 1)
+    return 0;
+  else if (location = 2)
+    return 1275;
+  else if (location = 3)
+    return 1275*2;
+  else if (location = 4)
+    return 1275*3;
+  else
+    return 1275*4;
+}
+/***************************************************************************************************************************************************************/
+void grab_Object(float object_array[], int given_index){
 reach_Limit_Vertical();
 reach_Limit_Horizontal();
 reach_Limit_Rotational();
-move_stepper(Horizontal_Stepper,2400);
+move_stepper(Horizontal_Stepper,2400); //(object grab horizontal location)
 turn_On_Magnet_North();
-move_stepper(Vertical_Stepper,6150);
-move_stepper(Vertical_Stepper,16000);
+move_stepper(Vertical_Stepper,(bed_level+int(object_array[0]*inch_to_position_conversion_vertical))); //6150
+move_stepper(Vertical_Stepper,vertical_level_1_position+object_height_offset+int(object_array[0]*inch_to_position_conversion_vertical)+int(object_array[given_index]*inch_to_position_conversion_vertical)); // 16000
 }
 /***************************************************************************************************************************************************************/
-void swap_Object(){
+void swap_Object(float object_array[], int given_index){
 //Dropping off Object
 move_stepper(Horizontal_Stepper,200);
 move_stepper(Rotational_Stepper,4675);
-move_stepper(Horizontal_Stepper,0);
-move_stepper(Vertical_Stepper,10950);
+move_stepper(Horizontal_Stepper,find_horizontal_drop_location(object_array, given_index));//0
+move_stepper(Vertical_Stepper,vertical_level_1_position+int(object_array[0]*inch_to_position_conversion_vertical));//10950
 turn_On_Magnet_South();
-delay(500);
+delay(250);
 
 //Grabbing new Object
-move_stepper(Vertical_Stepper,15000);
-move_stepper(Horizontal_Stepper,1275);
+move_stepper(Vertical_Stepper,vertical_level_1_position+object_height_offset+int(object_array[given_index]*inch_to_position_conversion_vertical));//15000
+move_stepper(Horizontal_Stepper,find_horizontal_pickup_location(given_index));//1275
 turn_On_Magnet_North();
-move_stepper(Vertical_Stepper,13100);
-delay(500);
+move_stepper(Vertical_Stepper,vertical_level_1_position+int((object_array[given_index]*inch_to_position_conversion_vertical)*2));//13100
+delay(250);
 
 //Moving to place New Object
-move_stepper(Vertical_Stepper,16000);
+move_stepper(Vertical_Stepper,vertical_level_1_position+object_height_offset+int(object_array[0]*inch_to_position_conversion_vertical)+int(object_array[given_index]*inch_to_position_conversion_vertical));
 move_stepper(Horizontal_Stepper,200);
 move_stepper(Rotational_Stepper,0);
 move_stepper(Horizontal_Stepper,2400);
-move_stepper(Vertical_Stepper,8050);
+move_stepper(Vertical_Stepper,bed_level+int(object_array[given_index]*inch_to_position_conversion_vertical));//8050
 turn_On_Magnet_South();
-delay(500);
+delay(250);
 
 //Returning arm to rest position
-move_stepper(Vertical_Stepper,10000);
+move_stepper(Vertical_Stepper,bed_level+object_height_offset+int(object_array[given_index]*inch_to_position_conversion_vertical));
 turn_Off_Magnet();
 move_stepper(Horizontal_Stepper,200);
 move_stepper(Rotational_Stepper,2750);
 move_stepper(Vertical_Stepper,0);
-delay(250);
 }
 
 
@@ -186,13 +208,13 @@ void loop() {
   if(swap_data_bool){
   swap_array[current_swap_location] = swap_data;
   }
-  for(int i = 0; i < 6; i++)
+  for(int i = 0; i < num_of_object_locations; i++)
 {
   Serial.print(object_array[i]);
 }
 Serial.println(" ");
   if(run_var){
-    grab_Object();
+    grab_Object(object_array, swap_array[1]);
     delay(50);
     run_var = false;
     end_bool = true;
@@ -201,7 +223,7 @@ Serial.println(" ");
   if(run_var2){  
     //Serial.println("Entered run_var2") ;
     end_bool = false;
-    swap_Object();
+    swap_Object(object_array, swap_array[1]);
     run_var2 = false;
     end_bool = true;
   }
