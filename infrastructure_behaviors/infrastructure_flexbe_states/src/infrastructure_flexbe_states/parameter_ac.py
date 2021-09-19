@@ -79,7 +79,7 @@ class ParameterActionClient(EventState):
                         self.params["object"] = float(parsed_row[0])
                         self.params["angle"] = float(parsed_row[1])
                         self.params["trials"] = float(parsed_row[2])
-                        self.tests.append(copy.deepcopy(params))
+                        self.tests.append(copy.deepcopy(self.params))
                 self.read_csv = True
             current_test = self.tests[self.test_count]
             if(self.trial_count == current_test["trials"]):
