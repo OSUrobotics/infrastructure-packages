@@ -76,9 +76,9 @@ class ParameterActionClient(EventState):
                     reader = csv.reader(f, delimiter=' ', quotechar='|')
                     for row in reader:
                         parsed_row = row[0].split(",")
-                        self.params["object"] = int(parsed_row[0])
-                        self.params["angle"] = int(parsed_row[1])
-                        self.params["trials"] = int(parsed_row[2])
+                        self.params["object"] = float(parsed_row[0])
+                        self.params["angle"] = float(parsed_row[1])
+                        self.params["trials"] = float(parsed_row[2])
                         self.tests.append(copy.deepcopy(params))
                 self.read_csv = True
             current_test = self.tests[self.test_count]
