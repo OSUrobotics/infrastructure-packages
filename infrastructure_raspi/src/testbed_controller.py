@@ -13,7 +13,7 @@ import rospy
 import sys
 import actionlib
 import RPi.GPIO as gpio
-from testbed.testbed import Testbed
+from testbed.testbed_arduino import Testbed
 
 #messages
 from infrastructure_msgs.msg import TestParametersAction, TestParametersGoal, TestParametersFeedback, TestParametersResult
@@ -35,6 +35,7 @@ class HardwareController():
         try:
             self.parameters_as.publish_feedback(TestParametersFeedback(status="setting object to: {}".format(trial_object)))
             #add testbed start trial call here
+		self.hardware.action_caller(trial_object, reset_angle)
 	    self.parameters_as.set_succeeded(TestParametersResult(result=0), text="SUCCESS")
         except:
 	    self.parameters_as.set_aborted(TestParametersResult(result=100), text="FAILED")
