@@ -30,8 +30,8 @@ class HardwareController():
 	self.reset_as.start()
 
     def parameter_callback(self, goal):
-        reset_angle = goal.parameters[0]
-        trial_object = goal.parameters[1]
+        reset_angle = goal.parameters[1]
+        trial_object = goal.parameters[0]
         try:
             self.parameters_as.publish_feedback(TestParametersFeedback(status="setting object to: {}".format(trial_object)))
             #add testbed start trial call here
