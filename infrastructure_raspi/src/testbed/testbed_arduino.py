@@ -30,8 +30,6 @@ class Testbed():  # this is a test
         self.cone_button = 14  # pin
 
         self.object_array = [[1,0,2,3,4],[18,0,37,37,37]]
-        self.current_reset_counter = 1
-        self.reset_quantity = 1
 
         # Variables for spooling in/out the cable
         self.reset_cable_pul = 19 # pin Green wire
@@ -148,8 +146,6 @@ class Testbed():  # this is a test
 
     #----------------------------------------------------------------------------------------------------------------------------#    
     def testbed_reset(self):
-        print("Starting reset ", self.current_reset_counter, "of ", self.reset_quantity)
-        self.current_reset_counter += 1
         self.cone_reset_up()
         self.cable_reset_spool_in()
         sleep(.25)
@@ -349,9 +345,8 @@ class Testbed():  # this is a test
     #     return current_action_list
 
 #----------------------------------------------------------------------------------------------------------------------------#    
-    def action_caller(self, object_index, reset_quantity, goal_angle):
+    def action_caller(self, object_index, goal_angle):
         self.current_reset_counter = 1
-        self.reset_quantity = reset_quantity
         self.goal_angle = goal_angle
         if object_index != self.object_array[0][0]:
             self.send_swap_data([0,object_index])
