@@ -35,7 +35,7 @@ class HardwareController():
         try:
             self.parameters_as.publish_feedback(TestParametersFeedback(status="setting object to: {}".format(trial_object)))
             #add testbed start trial call here
-		self.hardware.action_caller(trial_object, reset_angle)
+	    self.hardware.action_caller(trial_object, reset_angle)
 	    self.parameters_as.set_succeeded(TestParametersResult(result=0), text="SUCCESS")
         except:
 	    self.parameters_as.set_aborted(TestParametersResult(result=100), text="FAILED")
@@ -48,10 +48,14 @@ class HardwareController():
         except:
 	    self.reset_as.set_aborted(StageResult(result=100), text="FAILED")
 
+
+def cleanup_wrapper():
+    gpio.cleanup()
+
 if __name__ == "__main__":
     #initialize hardware
     testbed = Testbed()
     rospy.init_node("testbed_controller", argv=sys.argv)
     initialize = HardwareController(testbed)
-    rospy.on_shutdown(gpio.cleanup())
+    rospy.on_shutdown(gpio.cleanup)
     rospy.spin()

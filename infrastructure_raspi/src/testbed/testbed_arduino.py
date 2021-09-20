@@ -30,6 +30,7 @@ class Testbed():  # this is a test
         self.cone_button = 14  # pin
 
         self.object_array = [[1,0,2,3,4],[18,0,37,37,37]]
+        self.previous_object = -1
 
         # Variables for spooling in/out the cable
         self.reset_cable_pul = 19 # pin Green wire
@@ -195,6 +196,8 @@ class Testbed():  # this is a test
                 if spool_in_time >= self.spool_in_time_limit or button_val == 1:
                     if button_val == 1:
                         print("button was pressed")
+                    else:
+                        print("time limit reached")
                     break
                 self.reset_cable_motor.move_for(0.025, self.reset_cable_motor.CCW)  # check rotations
                 spool_in_time = time() - start_time        
@@ -290,10 +293,10 @@ class Testbed():  # this is a test
             if return_value == 3:
                 break
         print("Sending Lower Reset Code")
-        reset_testbed.cone_reset_up()
-        reset_testbed.cable_reset_spool_in()
-        reset_testbed.cone_reset_up()
-        reset_testbed.cable_reset_spool_out(.75)
+        self.cone_reset_up()
+        self.cable_reset_spool_in()
+        self.cone_reset_up()
+        self.cable_reset_spool_out(.75)
 
         self.send_transmission(4,self.I2C_SLAVE2_ADDRESS)
         return_value = self.read_transmission(self.I2C_SLAVE2_ADDRESS)
@@ -307,10 +310,10 @@ class Testbed():  # this is a test
             if return_value == 5:
                 break
 
-        reset_testbed.cable_reset_spool_in()
-        reset_testbed.cone_reset_down()
-        reset_testbed.cable_reset_spool_out(self.spool_out_time_limit)
-        reset_testbed.turntable_reset_home()
+        self.cable_reset_spool_in()
+        self.cone_reset_down()
+        self.cable_reset_spool_out(self.spool_out_time_limit)
+        self.turntable_reset_home()
 #----------------------------------------------------------------------------------------------------------------------------#    
     # def get_user_params(self):
     #     repeat_bool = 1
@@ -347,11 +350,21 @@ class Testbed():  # this is a test
 #----------------------------------------------------------------------------------------------------------------------------#    
     def action_caller(self, object_index, goal_angle):
         self.current_reset_counter = 1
-        self.goal_angle = goal_angle
-        if object_index != self.object_array[0][0]:
+
+        #first time run of testbed
+        if (self.previous_object == -1):
+            self.testbed_reset()
+            self.previous_object = object_index
+        elif object_index != self.previous_object:
             self.send_swap_data([0,object_index])
             self.data_transfer(self.object_array[1])
             reset_testbed.object_swap(object_index)
+            self.previous_object = object_index
+            self.goal_angle = 0
+        if goal_angle != self.goal_angle:
+            self.goal_angle = goal_angle
+            self.turntable_reset_home()
+            self.turntable_move_angle(self.goal_angle)
         return
 
 #----------------------------------------------------------------------------------------------------------------------------#    
@@ -377,7 +390,7 @@ What do you want to test? (enter the number)
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.testbed_reset(0)
+        reset_testbed.testbed_reset()
     elif test_num == 1:
 
         reset_testbed.cable_reset_spool_out(4.5)
