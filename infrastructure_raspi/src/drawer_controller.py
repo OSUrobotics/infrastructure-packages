@@ -43,8 +43,8 @@ class HardwareController():
         self.collect_data = False
         self.is_set = False
         #duplicate of data_collection
-        self.trial_count = 0
-        self.data_path = "/home/ubuntu/remhome/Documents/drawer_tests/test1/" #use test_name parameter? make path dynamic
+        self.trial_count = 0 #doesn't reset when test is done (only when node is closed does it reset)
+        self.data_path = "/home/ubuntu/remhome/Documents/drawer_tests/test1/" #use test_name parameter?
         self.trial_name = "drawer_trial" #replace with parameter name from launch file
         self.trial_data = deque()
         
@@ -96,7 +96,7 @@ class HardwareController():
             self.hardware.reset()
 	    
             self.reset_as.publish_feedback(StageFeedback(status="Making CSV file"))
-            if(not path.os.exists(self.data_path)):
+            if(not os.path.exists(self.data_path)):
                 os.makedirs(self.data_path)
             f_name = self.trial_name + str(self.trial_count) + ".csv"
             f = self.data_path + f_name
@@ -105,8 +105,9 @@ class HardwareController():
             n = "init"
             while(True):
                 try:
-                    n = self.trial_data.pop()
+                    n = self.trial_data.popleft()
                 except IndexError:
+		    print("broke")
                     break
                 trial_f.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {} ,{}, {}, {}, {}, {}, {}\n".format(n.tof, n.fsr1, 
                     n.fsr2, n.fsr3, n.fsr4, n.fsr5, n.fsr6, n.fsr7, n.fsr8, n.fsr9, n.fsr10, n.fsr11, n.fsr12, 
@@ -114,7 +115,8 @@ class HardwareController():
             trial_f.close()
 
 	    self.reset_as.set_succeeded(StageResult(result=0), text="SUCCESS")
-        except:
+        except Exception as e:
+	    print(e)
 	    self.reset_as.set_aborted(StageResult(result=100), text="FAILED")
 
     def stop_sleep_callback(self, msg):
