@@ -72,7 +72,7 @@ class ParameterActionClient(EventState):
         self.trial_count = self.trial_count + 1
         if(rosnode.rosnode_ping("testbed_controller", max_count=10)):
             if(not self.read_csv):
-                with open('parameters.csv', mode='r') as f:
+                with open('/home/testbed-tower/infrastructure_system/parameters.csv', mode='r') as f:
                     reader = csv.reader(f, delimiter=' ', quotechar='|')
                     for row in reader:
                         parsed_row = row[0].split(",")

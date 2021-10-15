@@ -47,7 +47,7 @@ int middle_horizontal_position;
 //limit switch analog pins
 int limitverticalpin = 37;
 int limithorizontalpin = 43;
-int limitrotationalpin = 35;
+int limitrotationalpin = 47;
 
 
 //Stepper Declarations
