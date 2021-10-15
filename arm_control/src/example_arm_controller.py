@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import sys
+import subprocess
 import rospy 
 import actionlib
 import time
@@ -18,10 +19,11 @@ class ExampleArmController():
 	
 		self.start_arm.publish_feedback(StageFeedback(status="EXAMPLE: GRABBING OBJECT"))
 		###do any arm calls or work here
-
+                #execfile("~/kinova_Ws/src/kinova-ros/kinova_scripts/src/kinova_path_planning.py")
+                subprocess.call(["/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/general_path_planner_kinova.py", "0", "/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/joint_angles/drawer_path.csv"])
                 #pseudo timer
-                user_in = raw_input("press key")
-		time.sleep(5)
+                #user_in = raw_input("press key")
+		#time.sleep(1)
 		self.start_arm.set_succeeded(StageResult(result = 0), text="SUCCESS")
 
 
