@@ -20,7 +20,7 @@ class ExampleArmController():
 		self.start_arm.publish_feedback(StageFeedback(status="EXAMPLE: GRABBING OBJECT"))
 		###do any arm calls or work here
                 #execfile("~/kinova_Ws/src/kinova-ros/kinova_scripts/src/kinova_path_planning.py")
-                subprocess.call(["/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/general_path_planner_kinova.py", "0", "/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/joint_angles/drawer_path.csv"])
+                subprocess.call(["/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/general_path_planner_kinova.py", "0", "0", "/home/sogol/kinova_Ws/src/kinova-ros/kinova_scripts/src/joint_angles/drawer_path.csv"])
                 #pseudo timer
                 #user_in = raw_input("press key")
 		#time.sleep(1)
