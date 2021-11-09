@@ -21,9 +21,8 @@ class Testbed():  # this is a test
         self.reset_cone_speed = 0.00001 # default value
 
         
-        self.cone_limit_switch = 17  # pin
         
-        self.lift_time_limit = 3.0  # seconds
+        self.lift_time_limit = 6.0  # seconds
         self.lower_time_limit = 2.0  # seconds
         self.goal_angle = 0
         #contact plates on the cone - like a button
@@ -50,6 +49,7 @@ class Testbed():  # this is a test
         self.turntable_motor_in1 = 21 # pin 
         self.turntable_motor_in2 = 27 # pin 
         self.turntable_motor_en = 13  
+        self.lower_arduino_reset_pin = 17
 
         # Variables for comunication with arduino for turntable encoder
 
@@ -69,14 +69,15 @@ class Testbed():  # this is a test
         gpio.setup(self.turntable_motor_in1, gpio.OUT)
         gpio.setup(self.turntable_motor_in2, gpio.OUT)
         gpio.setup(self.turntable_motor_en, gpio.OUT)
+        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
 
         gpio.output(self.turntable_motor_en, gpio.HIGH)
         gpio.output(self.turntable_motor_in1, gpio.LOW)
+        gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
         gpio.output(self.turntable_motor_in2, gpio.LOW)
         self.turntable_pwm = gpio.PWM(self.turntable_motor_pwm, 1000)
         self.turntable_pwm.start(50)
 
-        gpio.setup(self.cone_limit_switch, gpio.IN, pull_up_down = gpio.PUD_DOWN)
         gpio.setup(self.hall_effect, gpio.IN)#, pull_up_down = gpio.PUD_DOWN)
         gpio.setup(self.cone_button, gpio.IN, pull_up_down = gpio.PUD_DOWN)
 
@@ -103,7 +104,7 @@ class Testbed():  # this is a test
         with smbus.SMBus(1) as I2Cbus:
             while True:
                     try:
-                        sleep(.001)
+                        sleep(.01)
                         data=self.I2Cbus.read_byte_data(address,1)
                         return data
                     except:
@@ -121,10 +122,15 @@ class Testbed():  # this is a test
                     var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
                 else:
                     self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
+                    sleep(.01)
                     var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    sleep(.01)
                     self.send_transmission(num,self.I2C_SLAVE2_ADDRESS)
+                    sleep(.01)
                     var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                    sleep(.01)
                     self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
+                    sleep(.01)
                     var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
     def send_swap_data(self, swap_list):
         self.I2Cbus = smbus.SMBus(1)
@@ -147,6 +153,7 @@ class Testbed():  # this is a test
 
     #----------------------------------------------------------------------------------------------------------------------------#    
     def testbed_reset(self):
+        self.lower_arduino_reset()
         self.cone_reset_up()
         self.cable_reset_spool_in()
         sleep(.25)
@@ -158,21 +165,23 @@ class Testbed():  # this is a test
         return 1
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cone_reset_up(self, time_duration=None):
-        if time_duration == None:
-            time_duration = self.lift_time_limit
-        start_time = time()
-        lift_time = 0
-        self.send_transmission(3,self.I2C_SLAVE_ADDRESS)
-        while True:
-            button = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            if lift_time >= self.lift_time_limit or button == 1:
-                if button == 1:  
-                    print("button was pressed")
-                else:
-                    print("time ran out")
-                break
-            self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CCW)
-            lift_time = time() - start_time
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
+            if time_duration == None:
+                time_duration = self.lift_time_limit
+            start_time = time()
+            lift_time = 0
+            self.send_transmission(3,self.I2C_SLAVE_ADDRESS)
+            while True:
+                button = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+                if lift_time >= self.lift_time_limit or button == 1:
+                    if button == 1:  
+                        print("button was pressed")
+                    else:
+                        print("time ran out")
+                    break
+                self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CCW)
+                lift_time = time() - start_time
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cone_reset_down(self, time_duration=None):  # look at switching to steps moved
         if time_duration == None:
@@ -219,7 +228,7 @@ class Testbed():  # this is a test
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
 
         if hall_effect == 0:  # ensures that it goes to the proper home orientation.
-            sleep(1)
+            sleep(2)
 
         while True:
             hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
@@ -228,11 +237,12 @@ class Testbed():  # this is a test
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
                 print("magnet detected")
                 break
-            sleep(0.001)
+            sleep(0.01)
     #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_move_angle(self, goal_angle=20):      
         self.I2Cbus = smbus.SMBus(1)
         with smbus.SMBus(1) as I2Cbus:  
+            self.lower_arduino_reset()
             self.send_transmission(2,self.I2C_SLAVE_ADDRESS)
             self.read_transmission(self.I2C_SLAVE_ADDRESS)
             self.send_transmission(6, self.I2C_SLAVE_ADDRESS)
@@ -242,41 +252,53 @@ class Testbed():  # this is a test
             while True:
                     try:                    
                         first_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
-                        sleep(.001)
+                        sleep(.01)
                         second_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
                         encoder_value = (first_byte<< 8) + (second_byte)
                         print("recieve from slave:")
                         print(encoder_value)
-                        sleep(.001)
+                        sleep(.01)
                         if encoder_value >= goal_angle:
                             gpio.output(self.turntable_motor_in1, gpio.LOW)
                             gpio.output(self.turntable_motor_in2, gpio.LOW)
                             break
                     except:
-                        print("remote i/o error")
+                       #print("remote i/o error")
                         self.send_transmission(8, self.I2C_SLAVE_ADDRESS)
                         while True:
                             try:
+                                sleep(.01)
                                 self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
+                                sleep(.01)
                                 break
                             except:
-                                print("remote i/o error")
-                                sleep(.001)
+                                #print("remote i/o error")
+                                sleep(.01)
                         while True:
                             try:
                                 sleep(0.01)
                                 self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
-                                sleep(0.01)
+                                sleep(.01)
                                 break
                             except:
-                                sleep(.001)
+                                sleep(.01)
                                 self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
-                                sleep(.001)
+                                sleep(.01)
                         sleep(.1)
+            sleep(.01)            
             self.send_transmission(7,self.I2C_SLAVE_ADDRESS)
+            sleep(.01)
             self.read_transmission(self.I2C_SLAVE_ADDRESS)
             gpio.cleanup()
     #----------------------------------------------------------------------------------------------------------------------------#    
+    def lower_arduino_reset(self):
+        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
+        gpio.output(self.lower_arduino_reset_pin, gpio.LOW)
+        sleep(.01)
+        gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
+        sleep(3)
+
+    #----------------------------------------------------------------------------------------------------------------------------#
     def object_swap(self, object_index):
         self.data_transfer(self.object_array[0])
         return_value = 0
@@ -353,6 +375,7 @@ class Testbed():  # this is a test
 
         #first time run of testbed
         if (self.previous_object == -1):
+            self.goal_angle = 0
             self.testbed_reset()
             self.previous_object = object_index
         elif object_index != self.previous_object:
@@ -360,17 +383,19 @@ class Testbed():  # this is a test
             self.data_transfer(self.object_array[1])
             reset_testbed.object_swap(object_index)
             self.previous_object = object_index
-            self.goal_angle = 0
-        if goal_angle != self.goal_angle:
+            if goal_angle != 0:
+                self.turntable_move_angle(goal_angle)
+        else:
             self.goal_angle = goal_angle
-            self.turntable_reset_home()
-            self.turntable_move_angle(self.goal_angle)
+            self.testbed_reset()
+        print("\nfinished first call\n")
         return
 
 #----------------------------------------------------------------------------------------------------------------------------#    
 def on_exit(self, sig, func=None):
         gpio.cleanup()
         gpio.output(self.turntable_motor_in1, gpio.LOW)
+        gpio.output(17, gpio.HIGH)
         gpio.output(self.turntable_motor_in2, gpio.LOW)
 #----------------------------------------------------------------------------------------------------------------------------#    
 if __name__ == '__main__':
@@ -390,7 +415,9 @@ What do you want to test? (enter the number)
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.testbed_reset()
+        reset_testbed.action_caller(0,0)
+        print("\nexited first call\n")
+        #reset_testbed.action_caller(2,0)
     elif test_num == 1:
 
         reset_testbed.cable_reset_spool_out(4.5)

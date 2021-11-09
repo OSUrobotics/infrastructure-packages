@@ -7,24 +7,23 @@ import sys
 import smbus2 as smbus#,smbus2
 import time
 # Slave Addresses
-I2C_SLAVE_ADDRESS = 12 #0x0b ou 11
+I2C_SLAVE_ADDRESS = 15 #0x0b ou 11
 I2C_SLAVE2_ADDRESS = 13
 # This function converts a string to an array of bytes.
-def ConvertStringsToBytes(src):
-    converted = []
-    try:  
-        for b in src:
-            converted.append(ord(b))
-        return converted
-    except:
-        converted.append(ord(src))
+# def ConvertStringsToBytes(src):
+#     converted = []
+#     try:  
+#         for b in src:
+#             converted.append(ord(b))
+#         return converted
+#     except:
+#         converted.append(ord(src))
 def main(args):
     # Create the I2C bus
     I2Cbus = smbus.SMBus(1)
     with smbus.SMBus(1) as I2Cbus:
-        slaveSelect = input("Which Arduino (1-3): ")
-        cmd = input("Enter command: ")
-        print(slaveSelect)
+        slaveSelect = 1 
+        cmd = 3
         if slaveSelect == 1:
             slaveAddress = I2C_SLAVE_ADDRESS
         elif slaveSelect == 2:
@@ -37,10 +36,8 @@ def main(args):
             print(type(slaveSelect))
             print("no slave selected")
             quit()
-        BytesToSend = ConvertStringsToBytes(str(cmd))
-        print("Sent " + str(slaveAddress) + " the " + str(cmd) + " command.")
-        print(BytesToSend )
-        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, BytesToSend)
+        BytesToSend = cmd
+        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, [BytesToSend])
         time.sleep(0.5)
         while True: 
             try:
@@ -50,7 +47,7 @@ def main(args):
                 time.sleep(.001)
             except:
                 print("remote i/o error")
-                time.sleep(3)
+                time.sleep(.01)
     return 0
 if __name__ == '__main__':
      try:

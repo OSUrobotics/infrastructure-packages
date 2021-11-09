@@ -1,5 +1,4 @@
 from time import time, sleep
-import spidev 
 import RPi.GPIO as gpio
 import sys
 import smbus2 as smbus#,smbus2
@@ -36,12 +35,6 @@ class testbed_test():
         self.p.start(75)
         
         gpio.setup(self.hall_effect_pin, gpio.IN, pull_up_down= gpio.PUD_DOWN)
-        
-        self.spi_bus = 0
-        self.spi_device = 0
-        self.spi = spidev.SpiDev()
-        self.spi.open(self.spi_bus, self.spi_device)
-        self.spi.max_speed_hz = 1000000
 
     def ConvertStringsToBytes(self, src):
         self.converted = []
@@ -198,22 +191,28 @@ class testbed_test():
             sleep(0.001)
             # self.BytesToSend = self.ConvertStringsToBytes("5")
             while True:
-                try:
-                    sleep(0.1)
-                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
-                    sleep(0.1)
-                    break
-                except:
-                    sleep(.5)
-                    self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
-                    sleep(.5)
+                    try:
+                        sleep(0.05)
+                        self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
+                        break
+                    except:
+                        sleep(.2)
+                        self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
 
             while True:
+                # while True:
+                #     try:
+                #         sleep(0.01)
+                #         self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
+                #         break
+                #     except:
+                #         sleep(.02)
+                #         self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [5])
                 try:
                     data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
                     print("recieve from slave:")
                     print(data)
-                    sleep(.01)
+                    sleep(.05)
                 except:
                     print("remote i/o error")
                     sleep(.1)
@@ -226,7 +225,7 @@ class testbed_test():
             # self.BytesToSend = self.ConvertStringsToBytes("5")
             while True:
                 try:
-                    sleep(0.01)
+                    sleep(0.05)
                     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [4])
                     sleep(0.01)
                     break
@@ -237,7 +236,7 @@ class testbed_test():
 
             while True:
                 try:
-                    sleep(0.01)
+                    sleep(0.05)
                     data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
                     print("recieve from slave:")
                     print(data)
@@ -254,9 +253,8 @@ class testbed_test():
             # self.BytesToSend = self.ConvertStringsToBytes("5")
             while True:
                 try:
-                    sleep(0.1)
+                    sleep(0.05)
                     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [3])
-                    sleep(0.1)
                     break
                 except:
                     sleep(.2)
@@ -264,12 +262,20 @@ class testbed_test():
                     sleep(.2)
 
             while True:
+                # while True:
+                    # try:
+                    #     sleep(0.01)
+                    #     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [3])
+                    #     break
+                    # except:
+                    #     sleep(.02)
+                    #     self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [3])
+                    #     sleep(.02)
                 try:
-                    sleep(0.01)
+                    sleep(0.05)
                     data=self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
                     print("recieve from slave:")
                     print(data)
-                    sleep(.01)
                 except:
                     print("remote i/o error")
                     sleep(.01)
