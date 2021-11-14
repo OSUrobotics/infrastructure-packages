@@ -39,6 +39,7 @@ class Testbed():  # this is a test
 
         self.spool_out_time_limit = 4.5  # seconds
         self.spool_in_time_limit = 20  # seconds
+        self.object_moved = False # used for edge case if object didn't move during trial
 
         
         # hall effect sensor for rotating table
@@ -195,26 +196,31 @@ class Testbed():  # this is a test
             lower_time = time() - start_time
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cable_reset_spool_in(self):
-            start_time = time()
-            spool_in_time = 0
-            self.send_transmission(4,self.I2C_SLAVE_ADDRESS)
-            button_val = 0
-            while True:
-                sleep(.01)
-                button_val = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-                if spool_in_time >= self.spool_in_time_limit or button_val == 1:
-                    if button_val == 1:
-                        print("button was pressed")
-                    else:
-                        print("time limit reached")
-                    break
-                self.reset_cable_motor.move_for(0.025, self.reset_cable_motor.CCW)  # check rotations
-                spool_in_time = time() - start_time        
+        self.object_moved = False
+        start_time = time()
+        spool_in_time = 0
+        self.send_transmission(4,self.I2C_SLAVE_ADDRESS)
+        button_val = 0
+        buffer = 0
+        while True:
+            sleep(.01)
+            button_val = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+            if spool_in_time >= self.spool_in_time_limit or button_val == 1:
+                if button_val == 1:
+                    print("button was pressed")
+                else:
+                    print("time limit reached")
+                break
+            if buffer > 5:
+                self.object_moved = True
+            self.reset_cable_motor.move_for(0.025, self.reset_cable_motor.CCW)  # check rotations
+            spool_in_time = time() - start_time
+            buffer += 1  
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cable_reset_spool_out(self, var):
         start_time = time()
         spool_out_time = 0
-        while True:
+        while self.object_moved: # used as if statement as well
             if spool_out_time >= var:
                 break
             self.reset_cable_motor.move_for(0.025, self.reset_cable_motor.CW)  # check rotations
@@ -289,10 +295,10 @@ class Testbed():  # this is a test
             self.send_transmission(7,self.I2C_SLAVE_ADDRESS)
             sleep(.01)
             self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            gpio.cleanup()
+            #gpio.cleanup()
     #----------------------------------------------------------------------------------------------------------------------------#    
     def lower_arduino_reset(self):
-        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
+        # gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
         gpio.output(self.lower_arduino_reset_pin, gpio.LOW)
         sleep(.01)
         gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
@@ -383,7 +389,7 @@ class Testbed():  # this is a test
             self.data_transfer(self.object_array[1])
             reset_testbed.object_swap(object_index)
             self.previous_object = object_index
-            if goal_angle != 0:
+            if not (goal_angle == 0):
                 self.turntable_move_angle(goal_angle)
         else:
             self.goal_angle = goal_angle
@@ -392,16 +398,24 @@ class Testbed():  # this is a test
         return
 
 #----------------------------------------------------------------------------------------------------------------------------#    
-def on_exit(self, sig, func=None):
-        gpio.cleanup()
-        gpio.output(self.turntable_motor_in1, gpio.LOW)
-        gpio.output(17, gpio.HIGH)
-        gpio.output(self.turntable_motor_in2, gpio.LOW)
+# def on_exit(self, sig, func=None):
+#         gpio.cleanup()
+#         gpio.output(self.turntable_motor_in1, gpio.LOW)
+#         gpio.output(17, gpio.HIGH)
+#         gpio.output(self.turntable_motor_in2, gpio.LOW)
+
+# on_exit runs when a class method is finished. Use __del__ instead
+def __del__(self):
+    print("should not have ran")
+    gpio.cleanup()
+    gpio.output(self.turntable_motor_in1, gpio.LOW)
+    gpio.output(17, gpio.HIGH)
+    gpio.output(self.turntable_motor_in2, gpio.LOW)
 #----------------------------------------------------------------------------------------------------------------------------#    
 if __name__ == '__main__':
 
     test_num = input("""
-0) Resets or Swaps
+0) Run bottom reset
 1) spool_out
 2) spool_in
 3) cone_up
@@ -415,9 +429,16 @@ What do you want to test? (enter the number)
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.action_caller(0,0)
-        print("\nexited first call\n")
-        #reset_testbed.action_caller(2,0)
+        reset_testbed.goal_angle = 30
+        # 25 move object, 25 stationary object
+        for i in range(50):
+            print("trial {}".format(i))
+            if(i < 25):
+                sleep(3)
+            reset_testbed.testbed_reset()
+        # reset_testbed.action_caller(0,0)
+        # print("\nexited first call\n")
+        # reset_testbed.action_caller(2,0)
     elif test_num == 1:
 
         reset_testbed.cable_reset_spool_out(4.5)
