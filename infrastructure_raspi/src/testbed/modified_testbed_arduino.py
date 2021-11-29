@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 
-#from os import DirEntry
+# this version has changed i2c code from original testbed_arduino.py
+
 from time import time, sleep
 import RPi.GPIO as gpio
 from stepper_motor import StepperMotor
 import sys
 import smbus2 as smbus # smbus2
 
-class Testbed():  # this is a test
+class Testbed():
 
     def __init__(self):
         
         # Slave Addresses
         self.I2C_SLAVE_ADDRESS = 15 # 0x0f = 15
+        self.i2cbus = smbus.SMBus(1)
+
         self.I2C_SLAVE2_ADDRESS = 14
-        self.I2Cbus = smbus.SMBus(1)
         # Variables for moving cone up and down
         self.reset_cone_pul = 16 # pin
         self.reset_cone_dir = 20  # pin
@@ -87,33 +89,42 @@ class Testbed():  # this is a test
         self.reset_cone_motor = StepperMotor(self.reset_cone_pul, self.reset_cone_dir, self.reset_cone_en, self.reset_cone_speed)
         self.reset_cable_motor = StepperMotor(self.reset_cable_pul, self.reset_cable_dir, self.reset_cable_en, self.reset_cable_speed)
     #----------------------------------------------------------------------------------------------------------------------------#       
-    def send_transmission(self,val,address):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            while True:
-                        try:
-                            sleep(0.01)
-                            self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                            sleep(0.01)
-                            break
-                        except:
-                            sleep(.05)
-                            self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                            sleep(.05)
+    # i2c bus read callback. (length in this application should just be 1)
+    # updates data reference with results
+    # returns: 0 if successful, -1 otherwise
+    def i2c_read(self, address, reg, data, length):
+        ret_val = 0
+        result = []
     
-    def read_transmission(self,address):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            while True:
-                    try:
-                        sleep(.01)
-                        data=self.I2Cbus.read_byte_data(address,1)
-                        return data
-                    except:
-                        sleep(.001)
+        try:
+            result = self.i2cbus.read_i2c_block_data(address, reg, length)
+        except IOError:
+            ret_val = -1
+
+        if (ret_val == 0):
+            for index in range(length):
+                data[index] = result[index]
+
+        return ret_val
+
+    # i2c bus write callback
+    # returns: 0 if successful, -1 otherwise
+    def i2c_write(self, address, reg, data, length):
+        ret_val = 0
+        d = [] # used so data isn't overwritten
+
+        for index in range(length):
+            d.append(data[index])
+        try:
+            self.i2cbus.write_i2c_block_data(address, reg, d)
+        except IOError:
+            ret_val = -1 
+
+        return ret_val
+    
     def data_transfer(self, data):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
             for num in data:
                 if num == 0:
                     self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
@@ -135,8 +146,8 @@ class Testbed():  # this is a test
                     sleep(.01)
                     var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
     def send_swap_data(self, swap_list):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
             b = self.object_array[0]
             c = b.index(swap_list[1])
             swap_list[1]=c
@@ -167,8 +178,8 @@ class Testbed():  # this is a test
         return 1
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cone_reset_up(self, time_duration=None):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:
             if time_duration == None:
                 time_duration = self.lift_time_limit
             start_time = time()
@@ -249,8 +260,8 @@ class Testbed():  # this is a test
             sleep(0.01)
     #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_move_angle(self, goal_angle=20):      
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:  
+        self.I2Cbus = smbus.SMBus(1)
+        with smbus.SMBus(1) as I2Cbus:  
             self.lower_arduino_reset()
             self.send_transmission(2,self.I2C_SLAVE_ADDRESS)
             self.read_transmission(self.I2C_SLAVE_ADDRESS)
