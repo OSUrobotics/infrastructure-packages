@@ -1,7 +1,6 @@
 #include <Wire.h>
+#define I2C_SLAVE 15
 /*********************************************************************************/
-int I2C_SLAVE = 15;
-
 volatile byte received = 0;
 volatile byte initial_received = 0;
 
@@ -25,26 +24,31 @@ void setup() {
   Serial.begin(57600);
 
   pinMode(encoder_pin, INPUT);
+  pinMode(limit_switch_pin, INPUT); //wasn't here before?
   pinMode(cone_button_pin, INPUT);
   pinMode(hall_effect_pin, INPUT);
   
   Wire.begin(I2C_SLAVE);
-  Wire.setClock( 100000L);
+  delay(1000);
+  //Wire.setClock( 100000L);
   Wire.onRequest(requestEvents);
   Wire.onReceive(receiveEvents);
 
-attachInterrupt(digitalPinToInterrupt(encoder_pin), step_counter, CHANGE);
+attachInterrupt(digitalPinToInterrupt(encoder_pin), step_counter, CHANGE); //is this to record step count of turn motor?
 }
 /*********************************************************************************/
 void loop() {
   if (received != 255)
     initial_received = received;
     
+  /*
   varl = digitalRead(limit_switch_pin);
   varb = digitalRead(cone_button_pin);
   varh = digitalRead(hall_effect_pin);
-  stepbytes[0]=lowByte(current_steps);
-  stepbytes[1]= highByte(current_steps);
+  */
+  //Serial.println("ls: " + String(varl) + " -- he: " + String(varh) + " --- cb: " + String(varb));
+  //stepbytes[0]=lowByte(current_steps);
+  //stepbytes[1]= highByte(current_steps);
   
   if (counting == false){
       current_steps = 0;
@@ -64,13 +68,16 @@ void requestEvents(){
       counting=true;
       break;
     case 3:
-      Wire.write(varl);
+      //Wire.write(varl);
+      Wire.write(digitalRead(limit_switch_pin));
       break;
     case 4:
-      Wire.write(varb);
+      //Wire.write(varb);
+      Wire.write(digitalRead(limit_switch_pin));
       break;
     case 5: 
-      Wire.write(varh);
+      //Wire.write(varh);
+      Wire.write(digitalRead(hall_effect_pin));
       break;
     case 6:
       if(swap){
