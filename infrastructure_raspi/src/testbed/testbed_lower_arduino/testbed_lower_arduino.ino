@@ -27,7 +27,6 @@ void setup() {
   pinMode(encoder_pin, INPUT);
   pinMode(cone_button_pin, INPUT);
   pinMode(hall_effect_pin, INPUT);
-  
   Wire.begin(I2C_SLAVE);
   Wire.setClock( 100000L);
   Wire.onRequest(requestEvents);
@@ -45,6 +44,7 @@ void loop() {
   varh = digitalRead(hall_effect_pin);
   stepbytes[0]=lowByte(current_steps);
   stepbytes[1]= highByte(current_steps);
+  //Serial.println("ls: " + String(varl) + " -- he: " + String(varh) + " --- cb: " + String(varb));
   
   if (counting == false){
       current_steps = 0;
