@@ -418,11 +418,11 @@ class Testbed():
 #         gpio.output(17, gpio.HIGH)
 #         gpio.output(self.turntable_motor_in2, gpio.LOW)
 
-def __del__(self):
-    gpio.output(self.turntable_motor_in1, gpio.LOW)
-    gpio.output(17, gpio.HIGH)
-    gpio.output(self.turntable_motor_in2, gpio.LOW)
-    gpio.cleanup()
+    def __del__(self):
+        gpio.output(self.turntable_motor_in1, gpio.LOW)
+        gpio.output(17, gpio.HIGH)
+        gpio.output(self.turntable_motor_in2, gpio.LOW)
+        gpio.cleanup()
 #----------------------------------------------------------------------------------------------------------------------------#    
 if __name__ == '__main__':
 

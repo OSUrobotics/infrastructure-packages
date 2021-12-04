@@ -88,70 +88,69 @@ class Testbed():  # this is a test
         self.reset_cable_motor = StepperMotor(self.reset_cable_pul, self.reset_cable_dir, self.reset_cable_en, self.reset_cable_speed)
     #----------------------------------------------------------------------------------------------------------------------------#       
     def send_transmission(self,val,address):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            while True:
-                        try:
-                            sleep(0.01)
-                            self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                            sleep(0.01)
-                            break
-                        except:
-                            sleep(.05)
-                            self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                            sleep(.05)
+        while True:
+            #try:
+                sleep(0.01)
+                #self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
+                self.I2Cbus.write_byte(address, val)
+                break
+            #except:
+              #  raise IOError("write transmission failed")
+                # sleep(.05)
+                # self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
+                # sleep(.05)
     
     def read_transmission(self,address):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            while True:
-                    try:
-                        sleep(.01)
-                        data=self.I2Cbus.read_byte_data(address,1)
-                        return data
-                    except:
-                        sleep(.001)
+        while True:
+                sleep(.01)
+                msg = smbus.i2c_msg.read(address, 2)
+                self.I2Cbus.i2c_rdwr(msg)
+                raw_list = list(msg)
+                val = (raw_list[0] << 8) + raw_list[1]
+                return val
+                # return self.I2Cbus.read_byte(address) # works for all boolean sensors
+                # data=self.I2Cbus.read_byte_data(address,1)
+                # return data
+                # sleep(.001)
+
     def data_transfer(self, data):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            for num in data:
-                if num == 0:
-                    self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                    self.send_transmission(9,self.I2C_SLAVE2_ADDRESS)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                    self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                else:
-                    self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
-                    sleep(.01)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                    sleep(.01)
-                    self.send_transmission(num,self.I2C_SLAVE2_ADDRESS)
-                    sleep(.01)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                    sleep(.01)
-                    self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
-                    sleep(.01)
-                    var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+        for num in data:
+            if num == 0:
+                self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                self.send_transmission(9,self.I2C_SLAVE2_ADDRESS)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+            else:
+                self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
+                sleep(.01)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                sleep(.01)
+                self.send_transmission(num,self.I2C_SLAVE2_ADDRESS)
+                sleep(.01)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+                sleep(.01)
+                self.send_transmission(7,self.I2C_SLAVE2_ADDRESS)
+                sleep(.01)
+                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+
     def send_swap_data(self, swap_list):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            b = self.object_array[0]
-            c = b.index(swap_list[1])
-            swap_list[1]=c
-            for num in swap_list:
-                self.send_transmission(10,self.I2C_SLAVE2_ADDRESS)
-                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                self.send_transmission((num+100),self.I2C_SLAVE2_ADDRESS)
-                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-                self.send_transmission(11,self.I2C_SLAVE2_ADDRESS)
-                var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
-            d = [self.object_array[0][0],self.object_array[1][0]]
-            self.object_array[0][0] = self.object_array[0][c]
-            self.object_array[1][0] = self.object_array[1][c]
-            self.object_array[0][c] = d[0]
-            self.object_array[1][c] = d[1]
+        b = self.object_array[0]
+        c = b.index(swap_list[1])
+        swap_list[1]=c
+        for num in swap_list:
+            self.send_transmission(10,self.I2C_SLAVE2_ADDRESS)
+            var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+            self.send_transmission((num+100),self.I2C_SLAVE2_ADDRESS)
+            var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+            self.send_transmission(11,self.I2C_SLAVE2_ADDRESS)
+            var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
+        d = [self.object_array[0][0],self.object_array[1][0]]
+        self.object_array[0][0] = self.object_array[0][c]
+        self.object_array[1][0] = self.object_array[1][c]
+        self.object_array[0][c] = d[0]
+        self.object_array[1][c] = d[1]
 
     #----------------------------------------------------------------------------------------------------------------------------#    
     def testbed_reset(self):
@@ -167,26 +166,27 @@ class Testbed():  # this is a test
         return 1
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cone_reset_up(self, time_duration=None):
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:
-            if time_duration == None:
-                time_duration = self.lift_time_limit
-            start_time = time()
-            lift_time = 0
-            self.send_transmission(3,self.I2C_SLAVE_ADDRESS)
-            while True:
-                button = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-                #print(button)
-                if lift_time >= self.lift_time_limit or button == 1:
-                    if button == 1:  
-                        print("button was pressed")
-                    else:
-                        print("time ran out")
-                    break
-                self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CCW)
-                lift_time = time() - start_time
+        print("cone up")
+        if time_duration == None:
+            time_duration = self.lift_time_limit
+        start_time = time()
+        lift_time = 0
+        self.send_transmission(3,self.I2C_SLAVE_ADDRESS)
+        sleep(0.1)
+        while True:
+            button = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+            #print(button)
+            if lift_time >= self.lift_time_limit or button == 1:
+                if button == 1:  
+                    print("button was pressed")
+                else:
+                    print("time ran out")
+                break
+            self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CCW)
+            lift_time = time() - start_time
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cone_reset_down(self, time_duration=None):  # look at switching to steps moved
+        print("cone down")
         if time_duration == None:
             time_duration = self.lower_time_limit
         start_time = time()
@@ -198,10 +198,12 @@ class Testbed():  # this is a test
             lower_time = time() - start_time
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cable_reset_spool_in(self):
+        print("spool in")
         self.object_moved = False
         start_time = time()
         spool_in_time = 0
         self.send_transmission(4,self.I2C_SLAVE_ADDRESS)
+        sleep(0.1)
         button_val = 0
         buffer = 0
         while True:
@@ -220,6 +222,7 @@ class Testbed():  # this is a test
             buffer += 1  
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cable_reset_spool_out(self, var):
+        print("spool out")
         start_time = time()
         spool_out_time = 0
         while self.object_moved: # used as if statement as well
@@ -229,79 +232,48 @@ class Testbed():  # this is a test
             spool_out_time = time() - start_time
      #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_reset_home(self):
+        print("resetting home")
         self.send_transmission(5,self.I2C_SLAVE_ADDRESS)
-        sleep(.001)
+        sleep(0.1)
         hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-        gpio.output(self.turntable_motor_in1, gpio.LOW)
-        gpio.output(self.turntable_motor_in2, gpio.HIGH)
-
-        if hall_effect == 0:  # ensures that it goes to the proper home orientation.
-            sleep(2)
-
-        while True:
-            hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            #print(hall_effect)
-            if hall_effect == 0:
-                gpio.output(self.turntable_motor_in1, gpio.LOW)
-                gpio.output(self.turntable_motor_in2, gpio.LOW)
-                print("magnet detected")
-                break
-            sleep(0.01)
-    #----------------------------------------------------------------------------------------------------------------------------#    
-    def turntable_move_angle(self, goal_angle=20):      
-        #self.I2Cbus = smbus.SMBus(1)
-        #with smbus.SMBus(1) as I2Cbus:  
-            self.lower_arduino_reset()
-            self.send_transmission(2,self.I2C_SLAVE_ADDRESS)
-            self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            self.send_transmission(6, self.I2C_SLAVE_ADDRESS)
-            sleep(0.0001)
+        if hall_effect == 0:
+            print("magnet detected")
+        else:
             gpio.output(self.turntable_motor_in1, gpio.LOW)
             gpio.output(self.turntable_motor_in2, gpio.HIGH)
             while True:
-                    try:                    
-                        first_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
-                        sleep(.01)
-                        second_byte =self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
-                        encoder_value = (first_byte<< 8) + (second_byte)
-                        print("recieve from slave:")
-                        print(encoder_value)
-                        sleep(.01)
-                        if encoder_value >= goal_angle:
-                            gpio.output(self.turntable_motor_in1, gpio.LOW)
-                            gpio.output(self.turntable_motor_in2, gpio.LOW)
-                            break
-                    except:
-                       #print("remote i/o error")
-                        self.send_transmission(8, self.I2C_SLAVE_ADDRESS)
-                        while True:
-                            try:
-                                sleep(.01)
-                                self.I2Cbus.read_byte_data(self.I2C_SLAVE_ADDRESS,1)
-                                sleep(.01)
-                                break
-                            except:
-                                #print("remote i/o error")
-                                sleep(.01)
-                        while True:
-                            try:
-                                sleep(0.01)
-                                self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
-                                sleep(.01)
-                                break
-                            except:
-                                sleep(.01)
-                                self.I2Cbus.write_i2c_block_data(self.I2C_SLAVE_ADDRESS, 0x00, [6])
-                                sleep(.01)
-                        sleep(.1)
-            sleep(.01)            
-            self.send_transmission(7,self.I2C_SLAVE_ADDRESS)
+                hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+                #print(hall_effect)
+                if hall_effect == 0:
+                    gpio.output(self.turntable_motor_in1, gpio.LOW)
+                    gpio.output(self.turntable_motor_in2, gpio.LOW)
+                    print("magnet detected")
+                    break
+                sleep(0.01)
+    #----------------------------------------------------------------------------------------------------------------------------#    
+    def turntable_move_angle(self, goal_angle=20):
+        print("moving to angle")
+        # self.send_transmission(6, self.I2C_SLAVE_ADDRESS) # begin counting and set to read counter
+        # sleep(5) # give me time increment counter 
+        # print(self.read_transmission(self.I2C_SLAVE_ADDRESS))
+        # self.send_transmission(7, self.I2C_SLAVE_ADDRESS) #stop counting and reset counter
+
+        gpio.output(self.turntable_motor_in1, gpio.LOW)
+        gpio.output(self.turntable_motor_in2, gpio.HIGH)
+        self.send_transmission(6, self.I2C_SLAVE_ADDRESS) # begin counting and set to read counter
+        while True:    
+            encoder_value = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+            print("recieve from slave:")
+            print(encoder_value)
             sleep(.01)
-            self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            #gpio.cleanup()
+            if encoder_value >= goal_angle:
+                gpio.output(self.turntable_motor_in1, gpio.LOW)
+                gpio.output(self.turntable_motor_in2, gpio.LOW)
+                break
+        self.send_transmission(7, self.I2C_SLAVE_ADDRESS) #stop counting and reset counter
     #----------------------------------------------------------------------------------------------------------------------------#    
     def lower_arduino_reset(self):
-        # gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
+        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
         gpio.output(self.lower_arduino_reset_pin, gpio.LOW)
         sleep(.01)
         gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
@@ -406,13 +378,8 @@ class Testbed():  # this is a test
 #         gpio.output(self.turntable_motor_in1, gpio.LOW)
 #         gpio.output(17, gpio.HIGH)
 #         gpio.output(self.turntable_motor_in2, gpio.LOW)
-
-def __del__(self):
-    gpio.output(self.turntable_motor_in1, gpio.LOW)
-    gpio.output(17, gpio.HIGH)
-    gpio.output(self.turntable_motor_in2, gpio.LOW)
-    gpio.cleanup()
 #----------------------------------------------------------------------------------------------------------------------------#    
+
 if __name__ == '__main__':
 
     test_num = input("""
@@ -431,12 +398,13 @@ What do you want to test? (enter the number)
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.goal_angle = 30
+        reset_testbed.goal_angle = 10
+        #reset_testbed.testbed_reset()
         # 25 move object, 25 stationary object
         for i in range(50):
-            print("trial {}".format(i))
-            if(i < 25):
-                sleep(3)
+            print("trial {}".format(i+1))
+            # if(i < 25):
+            #     sleep(3)
             reset_testbed.testbed_reset()
         # reset_testbed.action_caller(0,0)
         # print("\nexited first call\n")
