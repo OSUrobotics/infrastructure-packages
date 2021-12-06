@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 
-#from os import DirEntry
 from time import time, sleep
 import RPi.GPIO as gpio
 from stepper_motor import StepperMotor
-import sys
-import smbus2 as smbus # smbus2
+from lower_i2c_controller import lowerController
+import smbus2 as smbus
 
-class Testbed():  # this is a test
+class Testbed():
 
     def __init__(self):
         
-        # Slave Addresses
-        self.I2C_SLAVE_ADDRESS = 15 # 0x0f = 15
+        self.I2Cbus = smbus.SMBus(1) # shared bus between slave devices
+        self.lower_slave = lowerController(self.I2Cbus)
+        # upper slave device
         self.I2C_SLAVE2_ADDRESS = 14
-        self.I2Cbus = smbus.SMBus(1)
+
+        
         # Variables for moving cone up and down
         self.reset_cone_pul = 16 # pin
         self.reset_cone_dir = 20  # pin
@@ -71,11 +72,11 @@ class Testbed():  # this is a test
         gpio.setup(self.turntable_motor_in1, gpio.OUT)
         gpio.setup(self.turntable_motor_in2, gpio.OUT)
         gpio.setup(self.turntable_motor_en, gpio.OUT)
-        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
+        # gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
 
         gpio.output(self.turntable_motor_en, gpio.HIGH)
         gpio.output(self.turntable_motor_in1, gpio.LOW)
-        gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
+        # gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
         gpio.output(self.turntable_motor_in2, gpio.LOW)
         self.turntable_pwm = gpio.PWM(self.turntable_motor_pwm, 1000)
         self.turntable_pwm.start(50)
@@ -86,34 +87,10 @@ class Testbed():  # this is a test
         # sets up the stepper motors
         self.reset_cone_motor = StepperMotor(self.reset_cone_pul, self.reset_cone_dir, self.reset_cone_en, self.reset_cone_speed)
         self.reset_cable_motor = StepperMotor(self.reset_cable_pul, self.reset_cable_dir, self.reset_cable_en, self.reset_cable_speed)
-    #----------------------------------------------------------------------------------------------------------------------------#       
-    def send_transmission(self,val,address):
-        while True:
-            #try:
-                sleep(0.01)
-                #self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                self.I2Cbus.write_byte(address, val)
-                break
-            #except:
-              #  raise IOError("write transmission failed")
-                # sleep(.05)
-                # self.I2Cbus.write_i2c_block_data(address, 0x00, [val])
-                # sleep(.05)
-    
-    def read_transmission(self,address):
-        while True:
-                sleep(.01)
-                msg = smbus.i2c_msg.read(address, 2)
-                self.I2Cbus.i2c_rdwr(msg)
-                raw_list = list(msg)
-                val = (raw_list[0] << 8) + raw_list[1]
-                return val
-                # return self.I2Cbus.read_byte(address) # works for all boolean sensors
-                # data=self.I2Cbus.read_byte_data(address,1)
-                # return data
-                # sleep(.001)
+    #----------------------------------------------------------------------------------------------------------------------------#    
 
     def data_transfer(self, data):
+        # need to rewrite once working on upper reset
         for num in data:
             if num == 0:
                 self.send_transmission(6,self.I2C_SLAVE2_ADDRESS)
@@ -136,6 +113,7 @@ class Testbed():  # this is a test
                 var =  self.read_transmission(self.I2C_SLAVE2_ADDRESS)
 
     def send_swap_data(self, swap_list):
+        # need to rewrite once working on upper reset
         b = self.object_array[0]
         c = b.index(swap_list[1])
         swap_list[1]=c
@@ -154,7 +132,6 @@ class Testbed():  # this is a test
 
     #----------------------------------------------------------------------------------------------------------------------------#    
     def testbed_reset(self):
-        self.lower_arduino_reset()
         self.cone_reset_up()
         self.cable_reset_spool_in()
         sleep(.25)
@@ -171,11 +148,10 @@ class Testbed():  # this is a test
             time_duration = self.lift_time_limit
         start_time = time()
         lift_time = 0
-        self.send_transmission(3,self.I2C_SLAVE_ADDRESS)
+        self.lower_slave.limit_switch_mode()
         sleep(0.1)
         while True:
-            button = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            #print(button)
+            button = self.lower_slave.get_data()
             if lift_time >= self.lift_time_limit or button == 1:
                 if button == 1:  
                     print("button was pressed")
@@ -185,7 +161,7 @@ class Testbed():  # this is a test
             self.reset_cone_motor.move_for(0.01, self.reset_cone_motor.CCW)
             lift_time = time() - start_time
     #----------------------------------------------------------------------------------------------------------------------------#    
-    def cone_reset_down(self, time_duration=None):  # look at switching to steps moved
+    def cone_reset_down(self, time_duration=None):
         print("cone down")
         if time_duration == None:
             time_duration = self.lower_time_limit
@@ -202,13 +178,13 @@ class Testbed():  # this is a test
         self.object_moved = False
         start_time = time()
         spool_in_time = 0
-        self.send_transmission(4,self.I2C_SLAVE_ADDRESS)
+        self.lower_slave.cone_button_mode()
         sleep(0.1)
         button_val = 0
         buffer = 0
         while True:
             sleep(.01)
-            button_val = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+            button_val = self.lower_slave.get_data()
             if spool_in_time >= self.spool_in_time_limit or button_val == 1:
                 if button_val == 1:
                     print("button was pressed")
@@ -233,17 +209,17 @@ class Testbed():  # this is a test
      #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_reset_home(self):
         print("resetting home")
-        self.send_transmission(5,self.I2C_SLAVE_ADDRESS)
+        self.lower_slave.hall_effect_mode()
         sleep(0.1)
-        hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+        hall_effect = self.lower_slave.get_data()
         if hall_effect == 0:
             print("magnet detected")
         else:
             gpio.output(self.turntable_motor_in1, gpio.LOW)
             gpio.output(self.turntable_motor_in2, gpio.HIGH)
             while True:
-                hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-                #print(hall_effect)
+                # hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
+                hall_effect = self.lower_slave.get_data()
                 if hall_effect == 0:
                     gpio.output(self.turntable_motor_in1, gpio.LOW)
                     gpio.output(self.turntable_motor_in2, gpio.LOW)
@@ -253,34 +229,30 @@ class Testbed():  # this is a test
     #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_move_angle(self, goal_angle=20):
         print("moving to angle")
-        # self.send_transmission(6, self.I2C_SLAVE_ADDRESS) # begin counting and set to read counter
-        # sleep(5) # give me time increment counter 
-        # print(self.read_transmission(self.I2C_SLAVE_ADDRESS))
-        # self.send_transmission(7, self.I2C_SLAVE_ADDRESS) #stop counting and reset counter
-
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
-        self.send_transmission(6, self.I2C_SLAVE_ADDRESS) # begin counting and set to read counter
+        self.lower_slave.start_counting()
         while True:    
-            encoder_value = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-            print("recieve from slave:")
+            encoder_value = self.lower_slave.get_data()
+            print("recieved from slave:")
             print(encoder_value)
             sleep(.01)
             if encoder_value >= goal_angle:
                 gpio.output(self.turntable_motor_in1, gpio.LOW)
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
                 break
-        self.send_transmission(7, self.I2C_SLAVE_ADDRESS) #stop counting and reset counter
-    #----------------------------------------------------------------------------------------------------------------------------#    
-    def lower_arduino_reset(self):
-        gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
-        gpio.output(self.lower_arduino_reset_pin, gpio.LOW)
-        sleep(.01)
-        gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
-        sleep(3)
-
+        self.lower_slave.stop_counting()
+    #----------------------------------------------------------------------------------------------------------------------------#  
+    # # not being used but can be useful tool in future
+    # def lower_arduino_reset(self):
+    #     gpio.setup(self.lower_arduino_reset_pin, gpio.OUT)
+    #     gpio.output(self.lower_arduino_reset_pin, gpio.LOW)
+    #     sleep(.01)
+    #     gpio.output(self.lower_arduino_reset_pin, gpio.HIGH)
+    #     sleep(3)
     #----------------------------------------------------------------------------------------------------------------------------#
     def object_swap(self, object_index):
+        # need to rewrite once working on upper reset
         self.data_transfer(self.object_array[0])
         return_value = 0
         self.send_transmission(2,self.I2C_SLAVE2_ADDRESS)
@@ -317,40 +289,7 @@ class Testbed():  # this is a test
         self.cone_reset_down()
         self.cable_reset_spool_out(self.spool_out_time_limit)
         self.turntable_reset_home()
-#----------------------------------------------------------------------------------------------------------------------------#    
-    # def get_user_params(self):
-    #     repeat_bool = 1
-    #     num_of_resets = 0
-    #     current_action_list = []
-    #     while repeat_bool:
-    #         num_of_resets = 0
-    #         num_of_degrees = 0
-    #         swap_bool = 0
-    #         first_object=0
-    #         second_object=0
-
-    #         num_of_resets = input("\nHow many resets would you like?\n")
-    #         if num_of_resets != 0:
-    #             num_of_degrees = input("\nHow many degrees would you like for each reset?\n")
-    #         swap_bool = input("\nWould you like to swap objects? (1 for yes, 0 for no)\n")
-    #         if swap_bool:
-    #             first_object = input("\nWhich object would you like to grab first?\n")
-    #             second_object = input("\nWhich object would you like to swap it with?\n")
-    #         if num_of_resets != 0:
-    #             print("\nYou have ", num_of_resets, "number of resets\n")
-    #             print("\nAt an angle of ", num_of_degrees," degrees \n")
-    #         else:
-    #             print("\nYou have no resets\n")
-    #         if swap_bool:
-    #             print("\nAnd you have swaps between objects in location ", first_object, "and ", second_object, "\n")
-    #         else:
-    #             print("\nAnd no swaps\n")
-    #         current_action = [num_of_resets,num_of_degrees,swap_bool,first_object,second_object]
-    #         current_action_list.extend(current_action)
-    #         repeat_bool = input("\nDo you have more actions? (1 for yes, 0 for no)\n")
-    #     return current_action_list
-
-#----------------------------------------------------------------------------------------------------------------------------#    
+#----------------------------------------------------------------------------------------------------------------------------#      
     def action_caller(self, object_index, goal_angle):
         self.current_reset_counter = 1
 
@@ -371,13 +310,6 @@ class Testbed():  # this is a test
             self.testbed_reset()
         print("\nfinished first call\n")
         return
-
-#----------------------------------------------------------------------------------------------------------------------------#    
-# def on_exit(self, sig, func=None):
-#         gpio.cleanup()
-#         gpio.output(self.turntable_motor_in1, gpio.LOW)
-#         gpio.output(17, gpio.HIGH)
-#         gpio.output(self.turntable_motor_in2, gpio.LOW)
 #----------------------------------------------------------------------------------------------------------------------------#    
 
 if __name__ == '__main__':
@@ -390,25 +322,17 @@ if __name__ == '__main__':
 4) cone_down
 5) turntable_home
 6) turntable_angle
-7) reset lower arduino
-
 What do you want to test? (enter the number)
 """)
 
 
     reset_testbed = Testbed()
     if test_num == 0:
-        reset_testbed.goal_angle = 10
-        #reset_testbed.testbed_reset()
-        # 25 move object, 25 stationary object
-        for i in range(50):
+        reset_testbed.goal_angle = 30
+        for i in range(45):
+            sleep(3) # give me time to move object
             print("trial {}".format(i+1))
-            # if(i < 25):
-            #     sleep(3)
             reset_testbed.testbed_reset()
-        # reset_testbed.action_caller(0,0)
-        # print("\nexited first call\n")
-        # reset_testbed.action_caller(2,0)
 
     elif test_num == 1:
         reset_testbed.cable_reset_spool_out(4.5)
@@ -428,9 +352,6 @@ What do you want to test? (enter the number)
     elif test_num == 6:
         angle = input("\nwhat angle do you want to rotate by?  (Degrees)\n")
         reset_testbed.turntable_move_angle(angle)
-
-    elif test_num == 7:
-        reset_testbed.lower_arduino_reset()
     
     else:
         print("\nNot implemented\n")
