@@ -182,6 +182,7 @@ class Testbed():
         sleep(0.1)
         button_val = 0
         buffer = 0
+        self.reset_cone_motor.override_enable()
         while True:
             sleep(.01)
             button_val = self.lower_slave.get_data()
@@ -195,7 +196,8 @@ class Testbed():
                 self.object_moved = True
             self.reset_cable_motor.move_for(0.025, self.reset_cable_motor.CCW)  # check rotations
             spool_in_time = time() - start_time
-            buffer += 1  
+            buffer += 1 
+        self.reset_cone_motor.override_disable()
     #----------------------------------------------------------------------------------------------------------------------------#    
     def cable_reset_spool_out(self, var):
         print("spool out")
@@ -212,20 +214,24 @@ class Testbed():
         self.lower_slave.hall_effect_mode()
         sleep(0.1)
         hall_effect = self.lower_slave.get_data()
-        if hall_effect == 0:
-            print("magnet detected")
-        else:
+        if hall_effect == 0: 
+            # already within HE range. To ensure rotation ends at beginning of range, turn for set degrees > range 
+            print("Already within Home range, moving to guarantee front of range")
             gpio.output(self.turntable_motor_in1, gpio.LOW)
             gpio.output(self.turntable_motor_in2, gpio.HIGH)
-            while True:
-                # hall_effect = self.read_transmission(self.I2C_SLAVE_ADDRESS)
-                hall_effect = self.lower_slave.get_data()
-                if hall_effect == 0:
-                    gpio.output(self.turntable_motor_in1, gpio.LOW)
-                    gpio.output(self.turntable_motor_in2, gpio.LOW)
-                    print("magnet detected")
-                    break
-                sleep(0.01)
+            sleep(2) # let turntable move for two seconds
+
+        gpio.output(self.turntable_motor_in1, gpio.LOW)
+        gpio.output(self.turntable_motor_in2, gpio.HIGH)
+        while True:
+            # turn until find HE (guaranteed to be at beginning of range)
+            hall_effect = self.lower_slave.get_data()
+            if hall_effect == 0:
+                gpio.output(self.turntable_motor_in1, gpio.LOW)
+                gpio.output(self.turntable_motor_in2, gpio.LOW)
+                print("magnet detected")
+                break
+            sleep(0.01)
     #----------------------------------------------------------------------------------------------------------------------------#    
     def turntable_move_angle(self, goal_angle=20):
         print("moving to angle")
