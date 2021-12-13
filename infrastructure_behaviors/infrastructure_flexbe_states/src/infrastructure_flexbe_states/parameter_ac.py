@@ -31,6 +31,7 @@ class ParameterActionClient(EventState):
 
         self._topic = topic
         self._client = ProxyActionClient({self._topic: TestParametersAction})
+        self._apparatus = None
 
 	# It may happen that the action client fails to send the action goal.
         self._error = False
@@ -68,9 +69,16 @@ class ParameterActionClient(EventState):
         #Creating the goal to send for testing
         goal = TestParametersGoal()
         
+        # find which apparatus is being used
+        if self._apparatus == None:
+            if rosnode.rosnode_ping("testbed_controller", max_count=10):
+                self._apparatus = "testbed"
+            else:
+                self._apparatus = "door/drawer"
+
         #for testbed. Name of file to be read: parameters.csv
         self.trial_count = self.trial_count + 1
-        if(rosnode.rosnode_ping("testbed_controller", max_count=10)):
+        if self._apparatus == "testbed":
             if(not self.read_csv):
                 with open('/home/testbed-tower/infrastructure_system/parameters.csv', mode='r') as f:
                     reader = csv.reader(f, delimiter=' ', quotechar='|')
