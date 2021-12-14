@@ -40,7 +40,7 @@ class Testbed():
         self.reset_cable_speed = 0.00001  # default value
 
         self.spool_out_time_limit = 4.5  # seconds
-        self.spool_in_time_limit = 20  # seconds
+        self.spool_in_time_limit = 12  # seconds
         self.object_moved = False # used for edge case if object didn't move during trial
 
         
@@ -176,13 +176,13 @@ class Testbed():
     def cable_reset_spool_in(self):
         print("spool in")
         self.object_moved = False
-        start_time = time()
-        spool_in_time = 0
         self.lower_slave.cone_button_mode()
         sleep(0.1)
         button_val = 0
         buffer = 0
         self.reset_cone_motor.override_enable()
+        start_time = time()
+        spool_in_time = 0
         while True:
             sleep(.01)
             button_val = self.lower_slave.get_data()
@@ -297,14 +297,13 @@ class Testbed():
         self.turntable_reset_home()
 #----------------------------------------------------------------------------------------------------------------------------#      
     def action_caller(self, object_index, goal_angle):
-        self.current_reset_counter = 1
-
-        #first time run of testbed
         if (self.previous_object == -1):
-            self.goal_angle = 0
-            self.testbed_reset()
+            # first run of testbed (assuming desired object is already on testbed)
+            self.goal_angle = goal_angle
+            # self.testbed_reset()
             self.previous_object = object_index
-        elif object_index != self.previous_object:
+        elif not (object_index == self.previous_object):
+            # different object
             self.send_swap_data([0,object_index])
             self.data_transfer(self.object_array[1])
             reset_testbed.object_swap(object_index)
@@ -312,9 +311,10 @@ class Testbed():
             if not (goal_angle == 0):
                 self.turntable_move_angle(goal_angle)
         else:
+            # same object
             self.goal_angle = goal_angle
-            self.testbed_reset()
-        print("\nfinished first call\n")
+            # self.testbed_reset()
+        # print("\nfinished first call\n")
         return
 #----------------------------------------------------------------------------------------------------------------------------#    
 
