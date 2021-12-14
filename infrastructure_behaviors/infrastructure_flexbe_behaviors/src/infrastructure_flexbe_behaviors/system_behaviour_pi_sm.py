@@ -40,6 +40,7 @@ class System_Behaviour_PiSM(Behavior):
 		self.add_parameter('reset_topic', 'reset_hardware')
 		self.add_parameter('stop_data_collection_topic', 'stop_data_collection')
 		self.add_parameter('arm_control_topic', 'start_arm_sequence')
+		self.add_parameter('session_info', dict())
 
 		# references to used behaviors
 
@@ -65,7 +66,7 @@ class System_Behaviour_PiSM(Behavior):
 		with _state_machine:
 			# x:107 y:34
 			OperatableStateMachine.add('Test Control',
-										TestControlState(num_trials=self.number_of_trials, num_tests=self.number_of_tests),
+										TestControlState(num_trials=self.number_of_trials, num_tests=self.number_of_tests, session_info=self.session_info),
 										transitions={'continue': 'Trial Control', 'failed': 'failed', 'completed': 'finished'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'number_of_trials': 'number_of_trials'})

@@ -3,6 +3,7 @@ from flexbe_core import EventState, Logger
 from flexbe_core.proxy import ProxyActionClient
 import rosnode
 import csv
+import rospy
 import copy
 
 # example import of required action
@@ -33,7 +34,7 @@ class ParameterActionClient(EventState):
         self._client = ProxyActionClient({self._topic: TestParametersAction})
         self._apparatus = None
 
-	# It may happen that the action client fails to send the action goal.
+	    # It may happen that the action client fails to send the action goal.
         self._error = False
 
         #temporary user interface for inputting test parameters
@@ -64,8 +65,8 @@ class ParameterActionClient(EventState):
                 print("Error Thrown")
                 return 'failed'
 
-
     def on_enter(self, userdata):
+        rospy.loginfo(" --------------------- {}".format(userdata))
         #Creating the goal to send for testing
         goal = TestParametersGoal()
         

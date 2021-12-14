@@ -36,6 +36,10 @@
 
 		<param type="text" name="arm_control_topic" default="start_arm_sequence" label="arm_control_topic" hint="Sets the arm_control_topic" />
 
+		<param type="yaml" name="session_info" default="" label="session_info" hint="Sets the session_info">
+			<key name="" />
+		</param>
+
 	</params>
 
 
