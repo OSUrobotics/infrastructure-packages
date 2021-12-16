@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+import copy
 
 from flexbe_core import EventState, Logger
 
@@ -13,7 +14,7 @@ class TrialControlState(EventState):
 
         -- rotation  int       TEMPORARY: gives rotation
 
-        ># number_of_trials     Trial information (currently just an int)
+        ># trial_info          Trial information
 
         <= continue             All actions completed
         <= failed               Trial control failed to initialize or call something TODO: Proper error checking
@@ -23,21 +24,23 @@ class TrialControlState(EventState):
 
         def __init__(self):
             # Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
-            super(TrialControlState, self).__init__(outcomes = ["continue", "failed", "completed"], input_keys=["number_of_trials"])
+            super(TrialControlState, self).__init__(outcomes = ["continue", "failed", "completed"], input_keys=["trial_info"], output_keys=["trial_params"])
 
             # Store state parameters for later use.
-            self._number_of_trials = None
+            self.num_trials = None
+            self._trial_params = []
 
 
         def execute(self, userdata):
             #if trials remain return continue, if not return complete, if direction is 0 return failed
-            if(self._number_of_trials > 0):
+            if(self.num_trials > 0):
                 #print(self._number_of_trials)
-                self._number_of_trials -= 1
+                userdata.trial_params = self._trial_params
+                self.num_trials -= 1
                 return "continue"
 
-            elif(self._number_of_trials <= 0):
-                self._number_of_trials = None
+            elif(self.num_trials <= 0):
+                self.num_trials = None
                 return "completed"
 
             else:
@@ -46,5 +49,10 @@ class TrialControlState(EventState):
 
         def on_enter(self, userdata):
             #Initializes class variable from userdata, has to be done outside of constructor 
-            if(self._number_of_trials is None and userdata.number_of_trials is not None):
-                self._number_of_trials = userdata.number_of_trials
+            if(self.num_trials is None and userdata.trial_info is not None):
+                self._trial_params = []
+                self.num_trials = copy.deepcopy(userdata.trial_info["trials"])
+                for elem in userdata.trial_info:
+                    if elem is not "trials":
+                        self._trial_params.append(userdata.trial_info[elem])
+                # self._number_of_trials = userdata.number_of_trials

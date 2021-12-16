@@ -33,8 +33,6 @@ class System_Behaviour_PiSM(Behavior):
 		self.name = 'System_Behaviour_Pi'
 
 		# parameters of this behavior
-		self.add_parameter('number_of_trials', 1)
-		self.add_parameter('number_of_tests', 1)
 		self.add_parameter('start_data_collection_topic', 'start_data_collection')
 		self.add_parameter('parameter_topic', 'set_test_parameters')
 		self.add_parameter('reset_topic', 'reset_hardware')
@@ -66,16 +64,17 @@ class System_Behaviour_PiSM(Behavior):
 		with _state_machine:
 			# x:107 y:34
 			OperatableStateMachine.add('Test Control',
-										TestControlState(num_trials=self.number_of_trials, num_tests=self.number_of_tests, session_info=self.session_info),
+										TestControlState(session_info=self.session_info),
 										transitions={'continue': 'Trial Control', 'failed': 'failed', 'completed': 'finished'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
-										remapping={'number_of_trials': 'number_of_trials'})
+										remapping={'trial_info': 'trial_info'})
 
 			# x:547 y:139
 			OperatableStateMachine.add('Set Test Parameters',
 										ParameterActionClient(topic=self.parameter_topic),
 										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
-										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
+										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'trial_params': 'trial_params'})
 
 			# x:786 y:171
 			OperatableStateMachine.add('Start Data Collection',
@@ -94,7 +93,7 @@ class System_Behaviour_PiSM(Behavior):
 										TrialControlState(),
 										transitions={'continue': 'Set Test Parameters', 'failed': 'failed', 'completed': 'Test Control'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
-										remapping={'number_of_trials': 'number_of_trials'})
+										remapping={'trial_info': 'trial_info', 'trial_params': 'trial_params'})
 
 			# x:851 y:308
 			OperatableStateMachine.add('User Arm Control',

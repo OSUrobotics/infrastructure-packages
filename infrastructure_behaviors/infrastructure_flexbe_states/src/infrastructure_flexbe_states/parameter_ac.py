@@ -28,7 +28,7 @@ class ParameterActionClient(EventState):
 
     def __init__(self, topic):
         # See example_state.py for basic explanations.
-        super(ParameterActionClient, self).__init__(outcomes = ['completed', 'failed'])
+        super(ParameterActionClient, self).__init__(outcomes = ['completed', 'failed'], input_keys=["trial_params"])
 
         self._topic = topic
         self._client = ProxyActionClient({self._topic: TestParametersAction})
@@ -38,15 +38,15 @@ class ParameterActionClient(EventState):
         self._error = False
 
         #temporary user interface for inputting test parameters
-        self.trial_count = 0
-        self.test_count = 0
-        self.read_csv = False
-        self.tests = []
-        self.params = {
-                "object" : 0,
-                "angle" : 0,
-                "trials" : 0
-                }
+        # self.trial_count = 0
+        # self.test_count = 0
+        # self.read_csv = False
+        # self.tests = []
+        # self.params = {
+        #         "object" : 0,
+        #         "angle" : 0,
+        #         "trials" : 0
+        #         }
 
 
     def execute(self, userdata):
@@ -69,36 +69,36 @@ class ParameterActionClient(EventState):
         rospy.loginfo(" --------------------- {}".format(userdata))
         #Creating the goal to send for testing
         goal = TestParametersGoal()
-        
+        goal.parameters = userdata.trial_params
         # find which apparatus is being used
-        if self._apparatus == None:
-            if rosnode.rosnode_ping("testbed_controller", max_count=10):
-                self._apparatus = "testbed"
-            else:
-                self._apparatus = "door/drawer"
+        # if self._apparatus == None:
+        #     if rosnode.rosnode_ping("testbed_controller", max_count=10):
+        #         self._apparatus = "testbed"
+        #     else:
+        #         self._apparatus = "door/drawer"
 
-        #for testbed. Name of file to be read: parameters.csv
-        self.trial_count = self.trial_count + 1
-        if self._apparatus == "testbed":
-            if(not self.read_csv):
-                with open('/home/testbed-tower/infrastructure_system/parameters.csv', mode='r') as f:
-                    reader = csv.reader(f, delimiter=' ', quotechar='|')
-                    for row in reader:
-                        parsed_row = row[0].split(",")
-                        self.params["object"] = float(parsed_row[0])
-                        self.params["angle"] = float(parsed_row[1])
-                        self.params["trials"] = float(parsed_row[2])
-                        self.tests.append(copy.deepcopy(self.params))
-                self.read_csv = True
-            current_test = self.tests[self.test_count]
-            if(self.trial_count == current_test["trials"]):
-                self.test_count = self.test_count + 1
-                self.trial_count = 0
-            goal.parameters = [current_test["object"], current_test["angle"]]
+        # #for testbed. Name of file to be read: parameters.csv
+        # self.trial_count = self.trial_count + 1
+        # if self._apparatus == "testbed":
+        #     if(not self.read_csv):
+        #         with open('/home/testbed-tower/infrastructure_system/parameters.csv', mode='r') as f:
+        #             reader = csv.reader(f, delimiter=' ', quotechar='|')
+        #             for row in reader:
+        #                 parsed_row = row[0].split(",")
+        #                 self.params["object"] = float(parsed_row[0])
+        #                 self.params["angle"] = float(parsed_row[1])
+        #                 self.params["trials"] = float(parsed_row[2])
+        #                 self.tests.append(copy.deepcopy(self.params))
+        #         self.read_csv = True
+        #     current_test = self.tests[self.test_count]
+        #     if(self.trial_count == current_test["trials"]):
+        #         self.test_count = self.test_count + 1
+        #         self.trial_count = 0
+        #     goal.parameters = [current_test["object"], current_test["angle"]]
 
-        #for door/drawer
-        else:
-            goal.parameters = [1,2,3]
+        # #for door/drawer
+        # else:
+        #     goal.parameters = [1,2,3]
 
         #error checking in case communication cant be established
         try:

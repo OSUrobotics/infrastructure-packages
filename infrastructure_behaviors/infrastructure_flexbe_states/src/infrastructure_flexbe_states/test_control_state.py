@@ -23,9 +23,21 @@ class TestControlState(EventState):
          - can get rid of additional counter and handler in parameter_ac.py
 
         -- num_trials int       Number of trials for each test TODO: Replace with array with more info 
-        -- num_tests  int       Number of tests TODO: Replace with array with more info 
+        -- num_tests  int       Number of tests TODO: Replace with array with more info
+        -- session_info file    CSV containing test and trial info as well as which apparatus is being used
+                                Format: 
+                        
+                                        "testbed"
+                                        object_index, angle, num_trials
+                                        ... (repeat for each test)
 
-        #> number_of_trials     Number of trials for test
+                                        OR
+
+                                        "drawer/door"
+                                        resistance_value, num_trials
+                                        ... (repeat for each test)
+
+        #> trial_info     Information pertaining a test
 
         <= continue             All actions completed
         <= failed               Test control failed to initialize or call something TODO: Proper error checking
@@ -33,34 +45,59 @@ class TestControlState(EventState):
 
         '''
 
-        def __init__(self, num_trials, num_tests, session_info):
+        def __init__(self, session_info):
             # Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
-            super(TestControlState, self).__init__(outcomes = ["continue", "failed", "completed"], output_keys=["number_of_trials"])
+            super(TestControlState, self).__init__(outcomes = ["continue", "failed", "completed"], output_keys=["trial_info"])
 
-            # Store state parameters for later use.
-            self._num_trials = num_trials
-            self._num_tests = num_tests
+            # # Store state parameters for later use.
+            # self._num_trials = num_trials
+            # self._num_tests = num_tests
 
             #added
             self._tests = []
-            self._params = {
+            self._testbed_params = {
                 "object" : 0,
                 "angle" : 0,
                 "trials" : 0
                 }
-            for test in session_info.split():
+            self._other_params = {
+                "resistance" : 0,
+                "trials" : 0
+            }
+            # flexbe already parses the csv file
+            raw_info = session_info.split(" ")
+            self._apparatus = raw_info[0]
+            raw_info = raw_info[1:]
+
+            for test in raw_info:
                 parsed_row = test.split(",")
-                self._params["object"] = float(parsed_row[0])
-                self._params["angle"] = float(parsed_row[1])
-                self._params["trials"] = float(parsed_row[2])
-                self._tests.append(copy.deepcopy(self._params))
+                if(self._apparatus == "testbed"):
+                    self._testbed_params["object"] = float(parsed_row[0])
+                    self._testbed_params["angle"] = float(parsed_row[1])
+                    self._testbed_params["trials"] = float(parsed_row[2])
+                    self._tests.append(copy.deepcopy(self._testbed_params))
+                else:
+                    self._other_params["resistance"] = float(parsed_row[0])
+                    self._other_params["trials"] = float(parsed_row[1])
+                    self._tests.append(copy.deepcopy(self._other_params))
+
+            self._num_tests = len(self._tests)
 
 
         def execute(self, userdata):
             #returns continue if tests remain, if none remain returns completed, if direction is 0 returns failed
             if(self._num_tests > 0):
+                userdata.trial_info = self._tests[len(self._tests) - self._num_tests]
+                # current_test = self._tests[len(self._tests) - self._num_tests]
+                # if(self._apparatus == "testbed"):
+                #     userdata.number_of_trials = current_test["trials"]
+                #     userdata.parameter_one = current_test["object"]
+                #     userdata.parameter_two = current_test["angle"]
+                # else:
+                #     userdata.number_of_trials = current_test["trials"]
+                #     userdata.parameter_one = current_test["resistance"]
+                #     userdata.parameter_two = None
                 self._num_tests -= 1
-                userdata.number_of_trials = self._num_trials
                 return "continue"
 
             elif(self._num_tests <= 0):
