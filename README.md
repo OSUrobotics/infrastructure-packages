@@ -7,13 +7,13 @@
 0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
 1. Create a ROS workspace and name it infrastructure system 
-```
+```console
 mkdir -p ~/infrastructure_system/src
 cd ~/infrastructure_system/
 catkin build
 ```
 2. Install FlexBE Binaries and clone the app to your src folder
-```
+```console
 sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
 git clone https://github.com/FlexBE/flexbe_app.git 
 ```
