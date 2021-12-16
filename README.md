@@ -140,7 +140,7 @@ On the PC:
 ```console
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
 ```
-Possible launch parameters (none are needed for testbed):
+Optional launch parameters (none are needed for testbed):
 ```
 collect_data:=true (This activates a rosbag that records all topics with the suffix "_infsensor", stored in data collection package. Defaults to false)
 
