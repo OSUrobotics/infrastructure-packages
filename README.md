@@ -7,23 +7,24 @@
 0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
 1. Create a ROS workspace and name it infrastructure system 
-```console
-mkdir -p ~/infrastructure_system/src
-cd ~/infrastructure_system/
-catkin build
-```
+    ```console
+    mkdir -p ~/infrastructure_system/src
+    cd ~/infrastructure_system/
+    catkin build
+    ```
 2. Install FlexBE Binaries and clone the app to your src folder
-```console
-sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
-git clone https://github.com/FlexBE/flexbe_app.git 
-```
+    ```console
+    sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
+    git clone https://github.com/FlexBE/flexbe_app.git 
+    ```
 3. Clone this repository into your src folder
 
-### If you arent using hardware you can stop here otherwise:
+4. Build workspace again
+    ```console
+    catkin build
+    ```
 
-4. Documentation here: https://docs.google.com/document/d/1FJUptD0hqH2z4wYqg2FA9XU88-Y16Aj19yGCMj52ljQ/edit?usp=sharing
-
-## Package Overview
+## Package Overview (outdated)
 
 ### data_collection
 
@@ -72,40 +73,109 @@ This contains all the necessary Flexbe states and behaviors (as well as a bunch 
 
 ## How to use:
 ### Interfacing with an arm
-You will need to create your own Moveit class that you can use within the action server located in arm_control. Its still very much under developement so Im not gonna go into too much detail until we do further testing.
+Place all path planning and moveit commands in the "start_arm_sequence" action server located in arm_control. (see example_arm_controller.py)
+
+### Connecting to an apparatus
+To be able to use one of the apparatuses, you must set up ROS communication between the main machine and the raspberry PI for the desired apparatus. 
+
+1. SSH into the PI for the desired apparatus
+    - Make sure PI is connected to same network as the PC via ethernet or wifi
+    - Password for all apparatuses: *Password* 
+    - testbed:
+        ```console
+        ssh ubuntu@raspi-testbed.local
+        ```
+    - door:
+        ```console
+        ssh ubuntu@raspi-door.local
+        ```
+    - drawer:
+        ```console
+        ssh ubuntu@raspi-drawer.local
+        ```
+3. On the master machine (PC):
+    ```console
+    export ROS_HOSTNAME=<PC-hostname>.local
+    export ROS_MASTER_URI=http://<PC-hostname>.local:11311
+    ```
+    example:
+    ```
+    tesbed@testbed-tower:~$ export ROS_HOSTNAME=testbed-tower.local
+    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
+    ```
+4. On the listener machine (PI):
+    ```console
+    export ROS_HOSTNAME=<PI-hostname>.local
+    export ROS_MASTER_URI=http://<PC-hostname>.local:11311
+    ```
+    example:
+    ```
+    ubuntu@raspi-testbed:~$ export ROS_HOSTNAME=raspi-testbed.local
+    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
+    ```
+5. (optional) Check that communication is working:
+    - Start a roscore on the PC:
+        ```console
+        roscore
+        ```
+    - list rostopics on the PI:
+        ```console
+        rostopic list
+        ```
+    - You should see these topics listed on the PI:
+        ```
+        /rosout
+        /rosout_agg
+        ```
+    - If you do not see those topics or PI says it was unable to connect to master:
+        - Make sure that roscore is running on the PC before trying to list rostopics on the PI
+        - Check that the PI and PC have the same ROS_MASTER_URI
+    - Kill the roscore once finished (ctrl-c)
+
+### Setting up remote home (for sensor data from door/drawer)
+ADD
     
 ### Launching 
-```
+On the PC:
+```console
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
-
 ```
-If you are planning to use the hardware be sure to follow the document at the beginning of the README, you must also use the hardware:=true flag when running the above launch file. In addition on the Pi you must run the launch file:
+Possible launch parameters (none are needed for testbed):
 ```
-roslaunch infrastructure_raspi start_raspi_nodes.launch
+collect_data:=true (This activates a rosbag that records all topics with the suffix "_infsensor", stored in data collection package. Defaults to false)
 
-```
-This is a temporary solution until the testbeds are further along and everything can be condensed to one launch file.
-
-This will launch FlexBe and all of the necesary nodes for a full trial. There are 4 arguments you can pass to the launch function for different behavior:
-```
-collect_data:=true (This activates a rosbag that records all topics with the suffix "_infsensor", stored in data collection package)
-
-name:=<string> (This is used to state the name of the test that will be used as prefixes for data files. In the future this will also be used for determining test station nodes.)
+name:=<string> (name given to rosbags, csv files, and videos)
   
-video:=true (You can use this to change whether or not you want to record video)
-  
-hardware:=true (Should do more in the future but right now it just doesnt launch the raspi nodes so they can be run on remote hardware with another launch file.)
+video:=true (activates recording for a camera connected to the main PC. Defaults to false)
 ```
-They automatically default to false so you have to explicitly state them if you wish to use any combination of these.
-
+On the PI:
+```console
+roslaunch infrastructure_raspi start_raspi_nodes.launch apparatus:=<string>
+```
+valid apparatus names:
+```
+testbed
+drawer
+door
+```
 
 ### FlexBE
-After running the launch file FlexBe will pop up to use the testbed or door:
+After running the launch file, FlexBe will pop up:
 
 #### General Test
-Load Behavior->System_Behaviour_Pi->Runtime Control->Change number of tests and trials to whatever youd like->Start Execution
+Load Behavior->System_Behaviour_Pi->Runtime Control->Insert full path to csv file containing the session parameters->Start Execution
 
-This will eventually be the master Behavior that is used for every testbed. As mentioned above the new pi hardware is not yet supported and a couple features will need to be added once that is implemented.
+##### Proper formatting of CSV file
+```
+testbed
+object_index, angle, num_trials
+... (repeat for each test)
+
+OR
+
+drawer/door
+resistance_value, num_trials
+... (repeat for each test)
+```
 
 ### You're ready to go!
-This is still very much under developement so there will be bugs and things will break. I most likely forgot something on here as well so if you need to use it with an arm or have any questions feel free to contact me at navek@oregonstate.edu. Good Luck!
