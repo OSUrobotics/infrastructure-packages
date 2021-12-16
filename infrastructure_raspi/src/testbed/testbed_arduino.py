@@ -27,6 +27,7 @@ class Testbed():
         self.lift_time_limit = 6.0  # seconds
         self.lower_time_limit = 2.0  # seconds
         self.goal_angle = 0
+        self.angle_error = 1
         #contact plates on the cone - like a button
         self.cone_button = 14  # pin
 
@@ -219,7 +220,7 @@ class Testbed():
             print("Already within Home range, moving to guarantee front of range")
             gpio.output(self.turntable_motor_in1, gpio.LOW)
             gpio.output(self.turntable_motor_in2, gpio.HIGH)
-            sleep(2) # let turntable move for two seconds
+            sleep(2.5) # let turntable move for 2.5 seconds
 
         gpio.output(self.turntable_motor_in1, gpio.LOW)
         gpio.output(self.turntable_motor_in2, gpio.HIGH)
@@ -240,13 +241,13 @@ class Testbed():
         self.lower_slave.start_counting()
         while True:    
             encoder_value = self.lower_slave.get_data()
-            print("recieved from slave:")
-            print(encoder_value)
-            sleep(.01)
             if encoder_value >= goal_angle:
                 gpio.output(self.turntable_motor_in1, gpio.LOW)
                 gpio.output(self.turntable_motor_in2, gpio.LOW)
+                print("angle motors stopped at: {}".format(encoder_value))
                 break
+        sleep(1) # make sure motors are fully stopped
+        print("Angle recorded after motors stopped running: {}".format(self.lower_slave.get_data()))
         self.lower_slave.stop_counting()
     #----------------------------------------------------------------------------------------------------------------------------#  
     # # not being used but can be useful tool in future
