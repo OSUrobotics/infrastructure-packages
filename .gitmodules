@@ -1,3 +1,6 @@
 [submodule "infrastructure-arms"]
 	path = infrastructure-arms
 	url = https://github.com/OSUrobotics/infrastructure-arms.git
+[submodule "infrastructure-raspi"]
+	path = infrastructure-raspi
+	url = https://github.com/OSUrobotics/infrastructure-raspi.git
