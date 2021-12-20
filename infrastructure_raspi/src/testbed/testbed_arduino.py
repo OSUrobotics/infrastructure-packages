@@ -301,7 +301,7 @@ class Testbed():
         if (self.previous_object == -1):
             # first run of testbed (assuming desired object is already on testbed)
             self.goal_angle = goal_angle
-            # self.testbed_reset()
+            self.testbed_reset()
             self.previous_object = object_index
         elif not (object_index == self.previous_object):
             # different object
