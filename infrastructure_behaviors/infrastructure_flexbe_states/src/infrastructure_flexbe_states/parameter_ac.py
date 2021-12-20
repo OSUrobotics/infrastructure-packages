@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from flexbe_core import EventState, Logger
 from flexbe_core.proxy import ProxyActionClient
 import rosnode
