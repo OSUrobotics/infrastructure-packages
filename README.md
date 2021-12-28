@@ -121,8 +121,28 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     - Kill the roscore once finished (ctrl-c)
 
 ### Setting up remote home (for sensor data from door/drawer)
-ADD
-    
+1. Install ssh server if not already installed on the PC:
+```console
+sudo apt-get install openssh-server
+```
+2. Install sshfs if not already installed on the PI:
+```console
+sudo apt-get install sshfs
+```
+3. If not already a ~/remhome dir on the PI, create one:
+```console
+mkdir ~/remhome
+```
+4. Mount remote share folder on the PI:
+```console
+sshfs <PC_HOSTNAME> ~/remhome
+```
+5. That's all! If needed, the remote folder on the PI can be unmounted with:
+```console
+fusermount -u ~/remhome
+```
+
+
 ### Launching 
 On the PC:
 ```console
