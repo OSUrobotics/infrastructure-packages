@@ -24,15 +24,15 @@
     catkin build
     ```
 
-## Package Overview (outdated)
+## Package Overview
 
 ### data_collection
 
 #### Current State:
-The main purpose of this package is to handle data collection for video recording and some rosbag behavior if it needs to. Uses OpenCV to record through a camera when the action server callback is triggered. Stops when another action server callback is triggered. Handles naming of files by using the parameter server variables set in the launch file.
+The main purpose of this package is to handle data collection for video recording and some rosbag behavior if it needs to. Uses OpenCV to record through a camera when the action server callback is triggered. Should be replaced with ros video capturing capabilities. Stops when another action server callback is triggered. Handles naming of files by using the parameter server variables set in the launch file.
 
 #### TODO/Future Updates:
-- This package should eventually end up on a Raspberry Pi where it will be mapped to a network drive for data storage. 
+- This package should eventually end up on a Raspberry Pi where it will be mapped to a network drive for data storage.
 - Defining location of video and rosbag storage will need to be updated to reflect this.
 - Publishes feedback messages for when the camera starts recording and stops recording, eventually we may want a more elegant solution.
 
@@ -41,19 +41,10 @@ The main purpose of this package is to handle data collection for video recordin
 #### Current State:
 Contains all necessary custom ros messages for the system. All future sensor messages should be defined here.
 
-#### TODO/Future Updates:
-- Eventually will need more sensor messages as needed for an individual testbed, try to follow the naming scheme being used as best you can so it is consistent.
-
 ### infrastructure_raspi
 
 #### Current State:
-Contains the nodes that will run on the raspberry pi and talk to the hardware. Right now there are 2 nodes, test_parameters and reset. The reset node is meant to be used as an outline for all future testbed reset nodes, put all hardware related calls within the callback of the action server. The test_parameter node is meant to recieve any pre test parameters for the physical hardware sent from flexbe and should be treated as a blueprint like reset. The test_parameter message type is an array of floats that will correspond to certain settings depending on the testbed.
-
-#### TODO/Future Updates:
-= Once the tesbeds are in a semi permanent location it would be a good idea write a script and new launch file to automatically connect the testbed Pi's and the desktop so you dont have to go through a long process each time.
-- Once the hardware and raspberry pi connection has been implemented the next step would be to implement a way to modify test parameters from flexbe or whatever portal we end up using. In its current state you have to use the same parameters for every test, a simple solution would be to use a csv file to hold parameters for each trial and read from that. Eventually we will need a permanent solution.
-- When Pi hardware implementation is complete add launch file arguments for given testbeds so that it knows which nodes to launch.
-- Feedback examples have been provided in both blueprint.
+Contains the nodes that run on the raspberry pi and talk to the hardware. Each apparatus has it's own controller that interacts with the source code for that apparatus.
 
 ### arm_control
 
@@ -67,9 +58,6 @@ This is just a placeholder until a more permanent solution can be found. There i
 
 #### Current State:
 This contains all the necessary Flexbe states and behaviors (as well as a bunch of simple sample states you can use). It now only contains 1 behavior, System_Behaviour_Pi, the hope is that this is the only behavior we will ever need for every testbed, the only thing that will change between them is the hardware nodes in the infrastructure_raspi package. The necessary topic names are preset but you can change them if needed.  
-
-#### TODO/Future Updates:
-- Once we have hardware to test on we may need to make changes depending on how everything fits together.
 
 ## How to use:
 ### Interfacing with an arm
