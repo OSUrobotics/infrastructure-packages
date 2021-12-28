@@ -135,7 +135,7 @@ mkdir ~/remhome
 ```
 4. Mount remote share folder on the PI:
 ```console
-sshfs <PC_HOSTNAME> ~/remhome
+sshfs <ROS_HOSTNAME> ~/remhome
 ```
 5. That's all! If needed, the remote folder on the PI can be unmounted with:
 ```console
