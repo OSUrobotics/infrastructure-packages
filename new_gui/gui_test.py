@@ -4,6 +4,7 @@
 #from pyqtgraph.Qt import QtGui, QtCore
 from PyQt5 import QtWidgets, uic
 import sys, subprocess
+
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__() # Call the inherited classes __init__ method
