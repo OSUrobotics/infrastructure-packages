@@ -88,8 +88,8 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     ```
     example:
     ```
-    tesbed@testbed-tower:~$ export ROS_HOSTNAME=testbed-tower.local
-    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
+    testbed@testbed-tower:~$ export ROS_HOSTNAME=testbed-tower.local
+    testbed@testbed-tower:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
     ```
 4. On the listener machine (PI):
     ```console
