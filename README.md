@@ -187,6 +187,7 @@ drawer/door
 resistance_value, num_trials
 ... (repeat for each test)
 ```
-- IMPORTANT: you must include the header line _tesbed_ or _drawer/door_
+- IMPORTANT: you must include the header line _testbed_ or _drawer/door_
+- See user_input_example.csv for an example
 
 ### You're ready to go!
