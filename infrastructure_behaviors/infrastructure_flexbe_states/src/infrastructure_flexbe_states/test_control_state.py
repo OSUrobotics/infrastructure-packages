@@ -27,13 +27,13 @@ class TestControlState(EventState):
         -- session_info file    CSV containing test and trial info as well as which apparatus is being used
                                 Format: 
                         
-                                        "testbed"
+                                        testbed
                                         object_index, angle, num_trials
                                         ... (repeat for each test)
 
                                         OR
 
-                                        "drawer/door"
+                                        drawer/door
                                         resistance_value, num_trials
                                         ... (repeat for each test)
 
@@ -69,6 +69,9 @@ class TestControlState(EventState):
             self._apparatus = raw_info[0]
             raw_info = raw_info[1:]
 
+            if len(raw_info) == 0:
+                raise IOError("Empty CSV. Be sure to include header line and test information")
+
             for test in raw_info:
                 parsed_row = test.split(",")
                 if(self._apparatus == "testbed"):
@@ -76,10 +79,13 @@ class TestControlState(EventState):
                     self._testbed_params["angle"] = float(parsed_row[1])
                     self._testbed_params["trials"] = float(parsed_row[2])
                     self._tests.append(copy.deepcopy(self._testbed_params))
-                else:
+                elif(self._apparatus == "drawer/door"):
                     self._other_params["resistance"] = float(parsed_row[0])
                     self._other_params["trials"] = float(parsed_row[1])
                     self._tests.append(copy.deepcopy(self._other_params))
+                else:
+                    rospy.loginfo("Invalid header line. Must be 'testbed' or 'drawer/door'")
+                    raise IOError("Invalid header line")
 
             self._num_tests = len(self._tests)
 
