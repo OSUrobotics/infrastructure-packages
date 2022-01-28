@@ -20,6 +20,10 @@ Follow instructions in docker_setup.md to install and setup docker with gui supp
     git clone https://github.com/FlexBE/flexbe_app.git 
     ```
 3. Clone this repository into your src folder
+    ```console
+    sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
+    git clone https://github.com/FlexBE/flexbe_app.git 
+    ```
 
 4. Build workspace again
     ```console
