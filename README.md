@@ -30,6 +30,20 @@
     cd ~/infrastructure_ws/
     source devel/setup.bash
     ```
+5. **Change Branches in submodules** to the desired branches. 
+    To check which branch each submodule is in, use this command in the respective submodule:
+    ```console
+    git branch
+    ```
+    The _infrastructure-arms_ directory contains branches for the arm controller nodes as well as any packages for the controlling the robotic arm. See [the readme](https://github.com/OSUrobotics/infrastructure-arms/blob/main/README.md) on how to use this repository.
+    Currenty available branches for _infrastructure-arms_:
+    - main (can be used for testing)
+    - Kinova_j2s7s300 (custom packages for Kinova arm)
+    Example (sets the branch to the testing _main_ branch):
+    ```console
+    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-arms
+    git checkout main
+    ```
 
 ## Package Overview (outdated)
 
