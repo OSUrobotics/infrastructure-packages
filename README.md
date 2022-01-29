@@ -1,10 +1,15 @@
-# infrastructure-packages (New File Structure)
+# infrastructure-packages with Docker Containers
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
-
-## Setup using docker: (will setup an enviroment and workspace to be used)
-Follow instructions in docker_setup.md to install and setup docker with gui support. 
     
 ## Setup:
+
+
+0. If docker is not already installed on your PC, follow instructions in docker_setup.md to install and setup docker with gui support. 
+
+1. Build an image for the infrastructure docker container
+    ```console
+    docker build https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
+    ```
 
 0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
