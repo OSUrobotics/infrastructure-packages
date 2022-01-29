@@ -4,7 +4,7 @@
 ## Setup:
 
 
-0. If docker is not already installed on your PC, follow instructions in docker_setup.md to install and setup docker with gui support. 
+0. If docker is not already installed on your PC, follow instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md) to install and setup docker with gui support. 
 
 1. Build the image from the infrastructure Dockerfile
     ```console
