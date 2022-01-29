@@ -1,16 +1,18 @@
 # infrastructure-packages with Docker Containers
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
-    
+
+## Prequisite:
+- Be able to read and understand instructions
+- Install docker and enable GUI support by following instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md).
+- Install catkin tools: https://catkin-tools.readthedocs.io/en/latest/installing.html
+
 ## Setup:
 
-
-0. If docker is not already installed on your PC, follow instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md) to install and setup docker with gui support. 
-
-1. Build the image from the infrastructure Dockerfile
+1. Build an image with the infrastructure Dockerfile
     ```console
     docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
     ```
-2. Create the docker container from the image
+2. Create and start the docker container from the image
    ```console
    DOCKER_COMMON_ARGS="--gpus all --env=NVIDIA_VISIBLE_DEVICES=all --env=NVIDIA_DRIVER_CAPABILITIES=all --env=DISPLAY --env=QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
    sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --name infra_env infrastructure-packages:grimmlins
@@ -23,29 +25,10 @@
     ```console
     docker attach infra_env
     ```
-
-0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
-
-1. Create a ROS workspace and name it infrastructure system 
+4. Inside of the container, source the ROS workspace:
     ```console
-    mkdir -p ~/infrastructure_system/src
-    cd ~/infrastructure_system/
-    catkin build
-    ```
-2. Install FlexBE Binaries and clone the app to your src folder
-    ```console
-    sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
-    git clone https://github.com/FlexBE/flexbe_app.git 
-    ```
-3. Clone this repository into your src folder
-    ```console
-    sudo apt install ros-$ROS_DISTRO-flexbe-behavior-engine
-    git clone https://github.com/FlexBE/flexbe_app.git 
-    ```
-
-4. Build workspace again
-    ```console
-    catkin build
+    cd ~/infrastructure_ws/
+    source devel/setup.bash
     ```
 
 ## Package Overview (outdated)
