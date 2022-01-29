@@ -10,6 +10,19 @@
     ```console
     docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
     ```
+2. Create the docker container from the image
+   ```console
+   DOCKER_COMMON_ARGS="--gpus all --env=NVIDIA_VISIBLE_DEVICES=all --env=NVIDIA_DRIVER_CAPABILITIES=all --env=DISPLAY --env=QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
+   sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --name infra_env infrastructure-packages:grimmlins
+   ```
+3. This will have started a detached container called "infra_env". You can check if it is running with:
+    ```console
+    docker ps
+    ```
+    Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://code.visualstudio.com/docs/containers/overview))
+    ```console
+    docker attach infra_env
+    ```
 
 0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
