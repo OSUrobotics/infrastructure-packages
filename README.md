@@ -6,9 +6,9 @@
 
 0. If docker is not already installed on your PC, follow instructions in docker_setup.md to install and setup docker with gui support. 
 
-1. Build an image for the infrastructure docker container
+1. Build the image from the infrastructure Dockerfile
     ```console
-    docker build https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
+    docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
     ```
 
 0. Install catkin tools if you havent already: https://catkin-tools.readthedocs.io/en/latest/installing.html
