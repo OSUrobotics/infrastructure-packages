@@ -19,7 +19,7 @@
     ```console
     docker ps
     ```
-    Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://code.visualstudio.com/docs/containers/overview))
+    Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker))
     ```console
     docker attach infra_env
     ```
