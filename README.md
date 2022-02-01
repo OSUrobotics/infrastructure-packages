@@ -2,7 +2,6 @@
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
 
 ## Prequisite:
-- Be able to read and understand instructions
 - Install docker and enable GUI support by following instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md).
 - Install catkin tools: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
