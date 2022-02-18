@@ -82,7 +82,22 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         ```console
         ssh ubuntu@raspi-drawer.local
         ```
-3. On the master machine (Container):
+2. Make sure you are using the correct workspace and branches on PI:
+    - If using _test_infra_system_ workspace (new file structure):
+        - Make sure infrastrucutre-raspi submodule is on correct apparatus branch
+        - Build and source workspace after branch changes (if any):
+        ```console
+        cd ~/test_infra_system
+        catkin build
+        source devel/setup.bash
+        ```
+    - If using _infrastructure_system_ (old file structure):
+    ```console
+    cd ~/infrastructure_system
+    catkin build
+    source devel/setup.bash
+    ```
+4. On the master machine (Container):
     ```console
     export ROS_IP=<PC-IP>
     export ROS_MASTER_URI=http://<PC-IP>:11311
@@ -153,15 +168,21 @@ name:=<string> (name given to rosbags, csv files, and videos)
 video:=true (activates recording for a camera connected to the main PC. Defaults to false)
 ```
 On the PI:
-```console
-roslaunch infrastructure_raspi start_raspi_nodes.launch apparatus:=<string>
-```
-valid apparatus names:
-```
-testbed
-drawer
-door
-```
+- If using _test_infra_system_ (new file structure):
+    ```console
+    # no params needed for launch file
+    roslaunch infrastructure_raspi start_raspi_nodes.launch
+    ```
+- If using _infrastructure_system_ (old file structure):
+    ```console
+    roslaunch infrastructure_raspi start_raspi_nodes.launch apparatus:=<name>
+    ```
+    valid apparatus names:
+    ```
+    testbed
+    drawer
+    door
+    ```
 
 ### FlexBE
 After running the launch file, FlexBe will pop up:
