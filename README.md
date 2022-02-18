@@ -97,7 +97,7 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     ```
 4. On the listener machine (PI):
     ```console
-    export ROS_HOSTNAME=<PI-IP>
+    export ROS_IP=<PI-IP>
     export ROS_MASTER_URI=http://<PC-IP>:11311 # same as master machine
     ```
     The IP of the listener machine can be found by checking the inet of the ethernet port using:
