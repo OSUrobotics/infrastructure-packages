@@ -103,28 +103,28 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     export ROS_MASTER_URI=http://<PC-IP>:11311
     ```
     The IP of the master machine can be found by checking the inet of the ethernet port using:
-        ```console
-        ifconfig
-        ```
+    ```console
+    ifconfig
+    ```
     example:
-        ```
-        tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
-        tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
-        ```
+    ```
+    tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
+    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+    ```
 4. On the listener machine (PI):
     ```console
     export ROS_IP=<PI-IP>
     export ROS_MASTER_URI=http://<PC-IP>:11311 # same as master machine
     ```
     The IP of the listener machine can be found by checking the inet of the ethernet port using:
-        ```console
-        ifconfig
-        ```
+    ```console
+    ifconfig
+    ```
     example:
-        ```
-        ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
-        ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
-        ```
+    ```
+    ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
+    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+    ```
 5. (optional) Check that communication is working:
     - Start a roscore on the container:
         ```console
