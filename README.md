@@ -20,9 +20,9 @@
     docker ps
     ```
    If the docker container gets stopped for any reason, you can start it again with:
-    ```console
-    docker start infra_env
-    ```
+        ```console
+        docker start infra_env
+        ```
 4. Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) to access the container)
     ```console
     docker attach infra_env
@@ -37,21 +37,21 @@
     - main (can be used for testing)
     - Kinova_j2s7s300 (custom packages for Kinova arm)
     - Example (sets the branch to the testing _main_ branch):
-    ```console
-    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-arms
-    git checkout main
-    ```
+        ```console
+        cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-arms
+        git checkout main
+        ```
     The _infrastructure-raspi_ directory contains the packages and source code for interfacing and controlling each apparatus. Within the docker container, the branch for this directory should just be in _main_. The _infrastructure_msgs_ submodule should also be loaded. If any of these requirements are not met, run the corresponding command below: 
     - Switch _infrastructure-raspi_ to _main_ branch:
-    ```console
-    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
-    git checkout main
-    ```
+        ```console
+        cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
+        git checkout main
+        ```
     - Load the _infrastructure_msgs_ submodule:
-    ```console
-    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
-    git submodule update --init
-    ```
+        ```console
+        cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
+        git submodule update --init
+        ```
  6. After all changes have been made, rebuild and source workspace in container:
     ```console
     cd ~/infrastructure_ws
@@ -103,28 +103,28 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     export ROS_MASTER_URI=http://<PC-IP>:11311
     ```
     The IP of the master machine can be found by checking the inet of the ethernet port using:
-    ```console
-    ifconfig
-    ```
+        ```console
+        ifconfig
+        ```
     example:
-    ```
-    tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
-    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
-    ```
+        ```
+        tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
+        tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+        ```
 4. On the listener machine (PI):
     ```console
     export ROS_IP=<PI-IP>
     export ROS_MASTER_URI=http://<PC-IP>:11311 # same as master machine
     ```
     The IP of the listener machine can be found by checking the inet of the ethernet port using:
-    ```console
-    ifconfig
-    ```
+        ```console
+        ifconfig
+        ```
     example:
-    ```
-    ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
-    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
-    ```
+        ```
+        ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
+        ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+        ```
 5. (optional) Check that communication is working:
     - Start a roscore on the container:
         ```console
