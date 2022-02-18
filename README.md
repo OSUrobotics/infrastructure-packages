@@ -28,11 +28,6 @@
     ```console
     docker attach infra_env
     ```
-5. Inside of the container, source the ROS workspace:
-    ```console
-    cd ~/infrastructure_ws/
-    source devel/setup.bash
-    ```
 5. **Change Branches in submodules** to the desired branches. 
     To check which branch each submodule is in, use this command in the respective submodule:
     ```console
@@ -58,6 +53,13 @@
     cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
     git submodule update --init
     ```
+ 6. After all changes have been made, rebuild and source workspace in container:
+    ```console
+    cd ~/infrastructure_ws
+    catkin_make
+    source devel/setup.bash
+    ```
+    
     
 ## How to use:
 ### Interfacing with an arm
