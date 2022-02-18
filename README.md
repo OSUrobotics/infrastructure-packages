@@ -92,12 +92,12 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         source devel/setup.bash
         ```
     - If using _infrastructure_system_ (old file structure):
-    ```console
-    cd ~/infrastructure_system
-    catkin build
-    source devel/setup.bash
-    ```
-4. On the master machine (Container):
+        ```console
+        cd ~/infrastructure_system
+        catkin build
+        source devel/setup.bash
+        ```
+3. On the master machine (Container):
     ```console
     export ROS_IP=<PC-IP>
     export ROS_MASTER_URI=http://<PC-IP>:11311
@@ -170,7 +170,6 @@ video:=true (activates recording for a camera connected to the main PC. Defaults
 On the PI:
 - If using _test_infra_system_ (new file structure):
     ```console
-    # no params needed for launch file
     roslaunch infrastructure_raspi start_raspi_nodes.launch
     ```
 - If using _infrastructure_system_ (old file structure):
