@@ -2,7 +2,7 @@
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
 
 ## Prequisite:
-- Install docker and enable GUI support by following instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md).
+- Install docker and enable GUI support by following instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md). Follow all instructions listed, except it is not necessary to create a base image of ubuntu 18.0.4.
 - Install catkin tools: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
 ## Setup:
@@ -20,11 +20,15 @@
     ```console
     docker ps
     ```
+4. If the docker container gets stopped for any reason, you can start it again with:
+    ```console
+    docker start infra_env
+    ```
     Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) to access the container)
     ```console
     docker attach infra_env
     ```
-4. Inside of the container, source the ROS workspace:
+5. Inside of the container, source the ROS workspace:
     ```console
     cd ~/infrastructure_ws/
     source devel/setup.bash
