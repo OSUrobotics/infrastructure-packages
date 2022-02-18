@@ -161,18 +161,21 @@ After running the launch file, FlexBe will pop up:
 
 #### General Test
 Load Behavior->System_Behaviour_Pi->Runtime Control->Insert full path to csv file containing the session parameters->Start Execution
-
-##### Proper formatting of CSV file
+##### Proper formatting of CSV file:
 ```
 testbed
 object_index, angle, num_trials
 ... (repeat for each test)
+```
 
 OR
 
+```
 drawer/door
 resistance_value, num_trials
 ... (repeat for each test)
 ```
+- **IMPORTANT:** you must include the header line _testbed_ or _drawer/door_
+- See _user_input_example.csv_ for an example
 
 ### You're ready to go!
