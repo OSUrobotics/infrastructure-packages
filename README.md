@@ -38,7 +38,7 @@
     ```console
     git branch
     ```
-    The _infrastructure-arms_ directory contains branches for the arm controller nodes as well as any packages for the controlling the robotic arm. See [the readme](https://github.com/OSUrobotics/infrastructure-arms/blob/main/README.md) on how to use this repository.
+    The _infrastructure-arms_ directory contains branches for the arm controller node as well as any packages for controlling the robotic arm. See [the readme](https://github.com/OSUrobotics/infrastructure-arms/blob/main/README.md) on how to use this repository.
     Currenty available branches for _infrastructure-arms_:
     - main (can be used for testing)
     - Kinova_j2s7s300 (custom packages for Kinova arm)
@@ -47,7 +47,17 @@
     cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-arms
     git checkout main
     ```
-    Currenty available branches for _infrastructure-raspi_:
+    The _infrastructure-raspi_ directory contains the packages and source code for interfacing and controlling each apparatus. Within the docker container, the branch for this directory should just be in _main_. The _infrastructure_msgs_ submodule should also be loaded. If any of these requirements are not met, run the corresponding command below: 
+    - Switch _infrastructure-raspi_ to _main_ branch:
+    ```console
+    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
+    git checkout main
+    ```
+    - Load the _infrastructure_msgs_ submodule:
+    ```console
+    cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
+    git submodule update --init
+    ```
 
 ## Package Overview (outdated)
 
