@@ -42,11 +42,12 @@
     Currenty available branches for _infrastructure-arms_:
     - main (can be used for testing)
     - Kinova_j2s7s300 (custom packages for Kinova arm)
-    Example (sets the branch to the testing _main_ branch):
+    - Example (sets the branch to the testing _main_ branch):
     ```console
     cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-arms
     git checkout main
     ```
+    Currenty available branches for _infrastructure-raspi_:
 
 ## Package Overview (outdated)
 
