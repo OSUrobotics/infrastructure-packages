@@ -86,11 +86,11 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     - If using _test_infra_system_ workspace (new file structure):
         - Make sure infrastrucutre-raspi submodule is on correct apparatus branch
         - Build and source workspace after branch changes (if any):
-        ```console
-        cd ~/test_infra_system
-        catkin build
-        source devel/setup.bash
-        ```
+            ```console
+            cd ~/test_infra_system
+            catkin build
+            source devel/setup.bash
+            ```
     - If using _infrastructure_system_ (old file structure):
         ```console
         cd ~/infrastructure_system
