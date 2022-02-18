@@ -143,6 +143,10 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     - If you do not see messages appear both on the PI and in the container for BOTH tests:
         - Make sure that roscore is running on the container before trying to list rostopics on the PI
         - Check that the PI and PC have the same ROS_MASTER_URI
+        - To check that the environment variable ROS_MASTER_URI is set properly in the current terminal:
+            ```console
+            printenv ROS_MASTER_URI
+            ```
     - Kill the roscore once finished (Ctrl-C)
 
 ### Setting up remote home (for sensor data from door/drawer)
