@@ -176,6 +176,6 @@ resistance_value, num_trials
 ... (repeat for each test)
 ```
 - **IMPORTANT:** you must include the header line _testbed_ or _drawer/door_
-- See _user_input_example.csv_ for an example
+- See _[user_input_example.csv](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/user_input_example.csv)_ for an example
 
 ### You're ready to go!
