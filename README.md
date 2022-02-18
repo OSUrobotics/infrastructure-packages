@@ -58,60 +58,13 @@
     cd ~/infrastructure_ws/src/infrastructure-packages/infrastructure-raspi
     git submodule update --init
     ```
-
-## Package Overview (outdated)
-
-### data_collection
-
-#### Current State:
-The main purpose of this package is to handle data collection for video recording and some rosbag behavior if it needs to. Uses OpenCV to record through a camera when the action server callback is triggered. Stops when another action server callback is triggered. Handles naming of files by using the parameter server variables set in the launch file.
-
-#### TODO/Future Updates:
-- This package should eventually end up on a Raspberry Pi where it will be mapped to a network drive for data storage. 
-- Defining location of video and rosbag storage will need to be updated to reflect this.
-- Publishes feedback messages for when the camera starts recording and stops recording, eventually we may want a more elegant solution.
-
-### infrastructure_msgs
-
-#### Current State:
-Contains all necessary custom ros messages for the system. All future sensor messages should be defined here.
-
-#### TODO/Future Updates:
-- Eventually will need more sensor messages as needed for an individual testbed, try to follow the naming scheme being used as best you can so it is consistent.
-
-### infrastructure_raspi
-
-#### Current State:
-Contains the nodes that will run on the raspberry pi and talk to the hardware. Right now there are 2 nodes, test_parameters and reset. The reset node is meant to be used as an outline for all future testbed reset nodes, put all hardware related calls within the callback of the action server. The test_parameter node is meant to recieve any pre test parameters for the physical hardware sent from flexbe and should be treated as a blueprint like reset. The test_parameter message type is an array of floats that will correspond to certain settings depending on the testbed.
-
-#### TODO/Future Updates:
-= Once the tesbeds are in a semi permanent location it would be a good idea write a script and new launch file to automatically connect the testbed Pi's and the desktop so you dont have to go through a long process each time.
-- Once the hardware and raspberry pi connection has been implemented the next step would be to implement a way to modify test parameters from flexbe or whatever portal we end up using. In its current state you have to use the same parameters for every test, a simple solution would be to use a csv file to hold parameters for each trial and read from that. Eventually we will need a permanent solution.
-- When Pi hardware implementation is complete add launch file arguments for given testbeds so that it knows which nodes to launch.
-- Feedback examples have been provided in both blueprint.
-
-### arm_control
-
-#### Current State:
-This is just a placeholder until a more permanent solution can be found. There is a node inside which has a simple action server, the idea is that any arm related tasks should be done within callback. One method would be to right your own seperate moveit class and call it within the callback. 
-
-#### TODO/Future Updates:
-- Once we figure out how end users will upload arm code this will need a complete overhaul. Treat this as a temporary solution
-
-### infrastructure_behaviors
-
-#### Current State:
-This contains all the necessary Flexbe states and behaviors (as well as a bunch of simple sample states you can use). It now only contains 1 behavior, System_Behaviour_Pi, the hope is that this is the only behavior we will ever need for every testbed, the only thing that will change between them is the hardware nodes in the infrastructure_raspi package. The necessary topic names are preset but you can change them if needed.  
-
-#### TODO/Future Updates:
-- Once we have hardware to test on we may need to make changes depending on how everything fits together.
-
+    
 ## How to use:
 ### Interfacing with an arm
-Place all path planning and moveit commands in the "start_arm_sequence" action server located in arm_control. (see example_arm_controller.py)
+Place all path planning and moveit commands in the "start_arm_sequence" action server located in arm_control. (see [example_arm_controller.py](https://github.com/OSUrobotics/infrastructure-arms/blob/main/arm_control/src/example_arm_controller.py))
 
 ### Connecting to an apparatus
-To be able to use one of the apparatuses, you must set up ROS communication between the main machine and the raspberry PI for the desired apparatus. 
+To be able to use one of the apparatuses, you must set up ROS communication between the main machine (within docker container) and the raspberry PI for the desired apparatus. 
 
 1. SSH into the PI for the desired apparatus
     - Make sure PI is connected to same network as the PC via ethernet or wifi
@@ -128,50 +81,59 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         ```console
         ssh ubuntu@raspi-drawer.local
         ```
-3. On the master machine (PC):
+3. On the master machine (Container):
     ```console
-    export ROS_HOSTNAME=<PC-hostname>.local
-    export ROS_MASTER_URI=http://<PC-hostname>.local:11311
+    export ROS_IP=<PC-IP>
+    export ROS_MASTER_URI=http://<PC-IP>:11311
+    ```
+    The IP of the master machine can be found by checking the inet of the ethernet port using:
+    ```console
+    ifconfig
     ```
     example:
     ```
-    tesbed@testbed-tower:~$ export ROS_HOSTNAME=testbed-tower.local
-    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
+    tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
+    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
     ```
 4. On the listener machine (PI):
     ```console
-    export ROS_HOSTNAME=<PI-hostname>.local
-    export ROS_MASTER_URI=http://<PC-hostname>.local:11311
+    export ROS_HOSTNAME=<PI-IP>
+    export ROS_MASTER_URI=http://<PC-IP>:11311 # same as master machine
+    ```
+    The IP of the listener machine can be found by checking the inet of the ethernet port using:
+    ```console
+    ifconfig
     ```
     example:
     ```
-    ubuntu@raspi-testbed:~$ export ROS_HOSTNAME=raspi-testbed.local
-    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://testbed-tower.local:11311
+    ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
+    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
     ```
 5. (optional) Check that communication is working:
-    - Start a roscore on the PC:
+    - Start a roscore on the container:
         ```console
         roscore
         ```
-    - list rostopics on the PI:
+    - In another terminal in the container, repeat step 3, then run:
         ```console
-        rostopic list
+        rosrun rospy_tutorials listener.py
         ```
-    - You should see these topics listed on the PI:
+    - On the PI:
+        ```console
+        rosrun rospy_tutorials talker.py
         ```
-        /rosout
-        /rosout_agg
-        ```
-    - If you do not see those topics or PI says it was unable to connect to master:
-        - Make sure that roscore is running on the PC before trying to list rostopics on the PI
+    - You should messages appear on both the PI and container
+    - The try running listener.py on the PI and talker.py in the container. You should observe similar behavior
+    - If you do not see messages appear both on the PI and in the container for BOTH ways:
+        - Make sure that roscore is running on the container before trying to list rostopics on the PI
         - Check that the PI and PC have the same ROS_MASTER_URI
-    - Kill the roscore once finished (ctrl-c)
+    - Kill the roscore once finished (Ctrl-C)
 
 ### Setting up remote home (for sensor data from door/drawer)
 ADD
     
 ### Launching 
-On the PC:
+In the container:
 ```console
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
 ```
