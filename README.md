@@ -3,7 +3,6 @@
 
 ## Prequisite:
 - Install docker and enable GUI support by following instructions in [docker_setup.md](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/docker_setup.md). Follow all instructions listed, except it is not necessary to create a base image of ubuntu 18.0.4.
-- Install catkin tools: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
 ## Setup:
 
