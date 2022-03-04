@@ -1,48 +1,39 @@
 # data_collection Package
 ## Overview
-Contains node that publishes the time stamps for the data collection period of a trial, records camera footage as a .avi, and controls when data collection is started and stopped.
+Contains node that publishes the time stamps for the data collection period of a trial, records camera footage as an .avi, and controls when data collection is started and stopped.
 
-Only publishes time stamps if collect_data argument is set to True in main launch file for the infrastructure system.
+Only publishes time stamps if collect_data argument is set to True in [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system.
 
-Only records camera feed if video argument is set to True in main launch file for the infrastructure system.
+Only records camera feed if video argument is set to True in [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system.
 
-__Note__: start_rosbags.launch in launch folder is currently not being used. Rosbags are launched through the main launch file in the [infrastructure_flexbe_behaviors](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/infrastructure_behaviors) package.
+__Note__: start_rosbags.launch in launch folder is currently not being used. Rosbags and the data_collection node are launched through the main launch file in the [infrastructure_flexbe_behaviors](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/infrastructure_behaviors) package.
 
-The [drawer_controller](https://github.com/OSUrobotics/infrastructure-raspi/blob/drawer/infrastructure_raspi/src/drawer_controller.py) node not only controlls the hardware for the Drawer, but also publishes the data to the _/hardware_infsensor_ topic as well as record the data in a csv file that's stored in a shared folder (_rem_home/_) between the PI and host machine.
 ## data_collection Package Interface
 
-__Note:__ depending on how the controller node is set up for the apparatus, it may have additional publishers/subscribers. Be sure to look at the README.md in the specific apparatus branch.
-
 ### Action Servers:
-- __set_test_parameters__
-  - Action server that the _Set Test Parameters_ parameter action client sends a goal to.
-  - Used to signal start of a trial. Runs any hardware code necessary for getting the apparatus ready for a trial. Sends result when hardware code has either finished executing or failed.
-- __reset_hardware__
-  - Action server that the _Reset_ stage action client sends a goal to.
-  - Used to signal end of a trial. Runs any hardware code necessary for resetting the apparatus after a trial. Sends result when hardware code has either finished executing or failed.
+- __set_data_collection__
+  - Action server that the _Start Data Collection_ stage action client sends a goal to.
+  - Used to signal the start of the data collection period. Increments the trial count for the current test. Sends result back after sleeping for three seconds to allow a [hardware controller](https://github.com/OSUrobotics/infrastructure-raspi/tree/main) that publishes data to trigger the stop_sleep_sub flag.
+- __stop_data_collection__
+  - Action server that the _Stop Data Collection_ stage action client sends a goal to.
+  - Used to signal the end of the data collection period. Publishes the time stamp for the data collection period to the /hardware_timestamps topic. Sends result back immediately.
 ### Services:
 - None
 ### Publishers:
-- __data_pub__
-  - Creates the _/hardware_infsensor_ topic and publishes all of the collected collected Door data. Uses the DoorSensors custom message.
+- __time_stamp_pub__
+  - Creates the _/hardware_timestamps_ topic and publishes all of the time stamps for each trial. Uses the DataTimestamps message.
 ### Subscribers:
-- __stop_sleep_sub__
-  - Listens to the _/start_data_collection/goal_ topic to know when to stop sleeping and start checking for whether or not it should start collecting and publishing the data from the Drawer.
-  - Used to prevent the node from taking up too much time on the schedular (yes, this was an actual problem).
-- __start_sub__
-  - Listens to the _/start_data_collection/result_ topic to know when to start collecting and publishing the data from the Drawer.
-- __stop_sub__
-  - Listens to the _/stop_data_collection/result_ topic to know when to stop collecting and publishing the data from the Drawer.
+- None
 ### Topics:
-- /hardware_infsensor
-- /set_test_parameters/cancel
-- /set_test_parameters/feedback
-- /set_test_parameters/goal
-- /set_test_parameters/result
-- /set_test_parameters/status
-- /reset_hardware/cancel
-- /reset_hardware/feedback
-- /reset_hardware/goal
-- /reset_hardware/result
-- /reset_hardware/status
+- /hardware_timestamps
+- /start_data_collection/cancel
+- /start_data_collection/feedback
+- /start_data_collection/goal
+- /start_data_collection/result
+- /start_data_collection/status
+- /stop_data_collection/cancel
+- /stop_data_collection/feedback
+- /stop_data_collection/goal
+- /stop_data_collection/result
+- /stop_data_collection/status
 
