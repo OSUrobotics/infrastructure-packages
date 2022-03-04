@@ -20,9 +20,9 @@
     docker ps
     ```
    If the docker container gets stopped for any reason, you can start it again with:
-        ```console
-        docker start infra_env
-        ```
+    ```console
+    docker start infra_env
+    ```
 4. Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) to access the container)
     ```console
     docker attach infra_env
