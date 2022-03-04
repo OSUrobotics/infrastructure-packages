@@ -138,8 +138,8 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         ```console
         rosrun rospy_tutorials talker.py
         ```
-    - You should messages appear on both the PI and container
-    - The try running listener.py on the PI and talker.py in the container. You should observe similar behavior
+    - You should see messages appear on both the PI and container
+    - Then try running listener.py on the PI and talker.py in the container. You should observe similar behavior
     - If you do not see messages appear both on the PI and in the container for BOTH tests:
         - Make sure that roscore is running on the container before trying to list rostopics on the PI
         - Check that the PI and PC have the same ROS_MASTER_URI
