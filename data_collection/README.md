@@ -1,6 +1,12 @@
 # data_collection Package
 ## Overview
-Contains node that publishes the time stamps for the data collection period of a trial, records camera footage
+Contains node that publishes the time stamps for the data collection period of a trial, records camera footage as a .avi, and controls when data collection is started and stopped.
+
+Only publishes time stamps if collect_data argument is set to True in main launch file for the infrastructure system.
+
+Only records camera feed if video argument is set to True in main launch file for the infrastructure system.
+
+__Note__: start_rosbags.launch in launch folder is currently not being used. Rosbags are launched through the main launch file in the [infrastructure_flexbe_behaviors](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/infrastructure_behaviors) package.
 
 The [drawer_controller](https://github.com/OSUrobotics/infrastructure-raspi/blob/drawer/infrastructure_raspi/src/drawer_controller.py) node not only controlls the hardware for the Drawer, but also publishes the data to the _/hardware_infsensor_ topic as well as record the data in a csv file that's stored in a shared folder (_rem_home/_) between the PI and host machine.
 ## data_collection Package Interface
