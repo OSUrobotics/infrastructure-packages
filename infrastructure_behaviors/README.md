@@ -11,7 +11,7 @@ Contains generated source code and manifest for the flexbe behavior __System_Beh
 Contains [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system. Launches flexbe, rosbags if collect_data argument is set to True, [data_collection](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/data_collection/src/data_collection.py) node, and the [example_arm_controller](https://github.com/OSUrobotics/infrastructure-arms/blob/main/arm_control/src/example_arm_controller.py) node found in the arm_control package. To learn how to use this launch file, see the main [readme](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching) for infrastructure-packages.
 - __Note:__ if example_arm_controller node is renamed, launch will fail.
 
-### infrastructrue_flexbe_states\
+### infrastructure_flexbe_states
 text
 
 ## data_collection Package Interface
