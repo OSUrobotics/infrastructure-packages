@@ -154,7 +154,8 @@ ADD
     
 ### Launching
 
-If not already done in current session, make sure gui support is enabled for docker containers on the master machine:
+If not done already, make sure gui support is enabled for docker containers on the master machine:
+Note: this needs to be done for every new session on the PC
 ```console
 xhost +local:docker &> /dev/null # run in a host terminal, not container!
 ```
