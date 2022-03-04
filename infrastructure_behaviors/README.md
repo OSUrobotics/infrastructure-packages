@@ -2,7 +2,14 @@
 
 ## Overview
 Includes two ROS packages:
-- what
+- infrastructure_flexbe_behaviors
+- infrastructure_flexbe_states
+
+### infrastructure_flexbe_behaviors
+Contains generated source code and manifest for the flexbe behavior __System_Behaviour_Pi__. They are modified through the flexbe app and should not be directly modified.
+
+Contains [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system. Launches flexbe, rosbags if collect_data argument is set to True, [data_collection](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/data_collection/src/data_collection.py) node, and the [example_arm_controller](https://github.com/OSUrobotics/infrastructure-arms/blob/main/arm_control/src/example_arm_controller.py) node found in the arm_control package.
+- __Note:__ if example_arm_controller node is renamed, launch will fail.
 
 Only publishes time stamps if collect_data argument is set to True in [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system.
 
