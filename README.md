@@ -84,7 +84,7 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         ```
 2. Make sure you are using the correct workspace and branches on PI:
     - If using _test_infra_system_ workspace (new file structure):
-        - Make sure infrastrucutre-raspi submodule is on correct apparatus branch
+        - Make sure infrastructure-raspi submodule is on correct apparatus branch
         - Build and source workspace after branch changes (if any):
             ```console
             cd ~/test_infra_system
