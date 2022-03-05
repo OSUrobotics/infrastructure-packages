@@ -66,5 +66,5 @@ __Notes:__
   - Signals the hardware to reset itself since the trial has finished.
   - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
 
-### Flow of Behavior
-![State flow of Flexbe behavior](./infrastructure_behavior_system.png?raw=true "Title")
+### Behavior Flow
+![State flow of Flexbe behavior](./infrastructure_behavior_system.png?raw=true "")
