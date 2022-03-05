@@ -12,7 +12,7 @@ Contains [main launch file](https://github.com/OSUrobotics/infrastructure-packag
 ### Rosbags Overview
 __rosbag_record_sensors__
 - records all topics with the suffix _\_infsensor_ (currently just _/hardware_infsensor_) for all tests
-- Stores rosbag in _stored_data/rosbags/$name_ inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package. $name is the name argument passed into the [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch).
+- Stores rosbag in _stored_data/rosbags/$name_ inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package. _$name_ is the name launch parameter set when [launching the main infrastructure system](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching).
 
 ## infrastructure_flexbe_states Package Overview
 Contains source code for each state in the flexbe behavior __System_Behaviour_Pi__. Some states have the same source code but with different parameter values, as shown in the __Flexbe Overview__ section.
