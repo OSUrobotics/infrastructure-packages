@@ -9,10 +9,14 @@ Contains generated source code and manifest for the flexbe behavior __System_Beh
 Contains [main launch file](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_behaviors/launch/start_test.launch) for the infrastructure system. Launches flexbe, rosbags if collect_data argument is set to True, [data_collection](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/data_collection/src/data_collection.py) node, and the [example_arm_controller](https://github.com/OSUrobotics/infrastructure-arms/blob/main/arm_control/src/example_arm_controller.py) node found in the arm_control package. To learn how to use this launch file, see the main [readme](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching) for infrastructure-packages.
 - __Note:__ if example_arm_controller node is renamed, launch will fail.
 
-### Rosbags Overview
+### Rosbag Recording Overview
 __rosbag_record_sensors__
-- records all topics with the suffix _\_infsensor_ (currently just _/hardware_infsensor_) for all tests
-- Stores rosbag in _stored_data/rosbags/$name_ inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package. _$name_ is the name launch parameter set when [launching the main infrastructure system](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching).
+- Records all topics with the suffix _\_infsensor_ (currently just _/hardware_infsensor_) for all tests
+- Stores rosbags in the _stored_data/rosbags/$name_ folder inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package. _$name_ is the name launch parameter set when [launching the main infrastructure system](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching).
+
+__rosbag_record_timestamps__
+- Records all topics with the suffix _\_timestamps_ (currently just _/hardware_timestamps_) for all tests
+- Stores rosbags in the  _stored_data/rosbags/timestamps_ inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package.
 
 ## infrastructure_flexbe_states Package Overview
 Contains source code for each state in the flexbe behavior __System_Behaviour_Pi__. Some states have the same source code but with different parameter values, as shown in the __Flexbe Overview__ section.
