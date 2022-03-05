@@ -65,3 +65,6 @@ __Notes:__
   - Stage action client that sends a goal to the reset_hardware action server. 
   - Signals the hardware to reset itself since the trial has finished.
   - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
+
+### Flow of Behavior
+![State flow of Flexbe behavior](./?raw=true "Title")
