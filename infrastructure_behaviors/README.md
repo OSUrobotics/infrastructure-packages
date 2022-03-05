@@ -11,11 +11,11 @@ Contains [main launch file](https://github.com/OSUrobotics/infrastructure-packag
 
 ### Rosbag Recording Overview
 __rosbag_record_sensors__
-- Records all topics with the suffix _\_infsensor_ (currently just _/hardware_infsensor_) for all tests
+- Records all topics with the suffix  _\_infsensor_ (currently just _/hardware_infsensor_) for all tests
 - Stores rosbags in the _stored_data/rosbags/$name_ folder inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package. _$name_ is the name launch parameter set when [launching the main infrastructure system](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/README.md#launching).
 
 __rosbag_record_timestamps__
-- Records all topics with the suffix _\_timestamps_ (currently just _/hardware_timestamps_) for all tests
+- Records all topics with the suffix  _\_timestamps_ (currently just _/hardware_timestamps_) for all tests
 - Stores rosbags in the  _stored_data/rosbags/timestamps_ inside the [data_collection](https://github.com/OSUrobotics/infrastructure-packages/tree/new_file_structure/data_collection) package.
 
 ## infrastructure_flexbe_states Package Overview
