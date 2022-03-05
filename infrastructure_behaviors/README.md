@@ -40,7 +40,7 @@ The flow of the states...
   - Checks the validity of the user input.
   - Source code: [test_control_state.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/test_control_state.py)
 2) Trial Control:
-  - In charge of checking how many trials has passed for the given test.
+  - In charge of checking how many trials has passed for the given test. If the number of trials in a test have been successfully ran, the Trial Control state will go back to the Test Control state.
   - Passes trial information to Set Test Parameters.
   - Source code: [trial_control_state.py](https://github.com/OSUrobotics/infrastructure-packages/blob/main/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/trial_control_state.py)
 3) Set Test Parameters:
