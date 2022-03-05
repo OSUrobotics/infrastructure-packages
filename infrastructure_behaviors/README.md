@@ -31,7 +31,9 @@ Used Nodes:
 
 ## System_Behaviour_Pi Behavior Overview
 
-The flow of the states...
+__Notes:__ 
+- The state behavior will fail if any one of the individual states failed. 
+- If a number of 0 tests are passed in, the Test Control state will make the behavior immediately finish.
 
 ### States
 1) Test Control:
