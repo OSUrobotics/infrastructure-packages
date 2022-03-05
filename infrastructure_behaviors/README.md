@@ -35,11 +35,31 @@ The flow of the states...
 
 ### States
 1) Test Control:
-  - In charge of controlling each test 
-  - Takes in the test information from the csv file and outputs them as userdata.
+  - In charge of controlling each test. Passes test information for each test to Trial Control state. If the number of tests are completed, the Test Control state moves the behavior into the finished state.
+  - Takes in the test information from the csv file session_info and outputs them as userdata.
   - Checks the validity of the user input.
   - Source code: [test_control_state.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/test_control_state.py)
 2) Trial Control:
-  - Takes in the test information from the csv file and outputs them as userdata.
-  - Checks the validity of the user input.
-  - Source code: [test_control_state.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/test_control_state.py)
+  - In charge of checking how many trials has passed for the given test.
+  - Passes trial information to Set Test Parameters.
+  - Source code: [trial_control_state.py](https://github.com/OSUrobotics/infrastructure-packages/blob/main/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/trial_control_state.py)
+3) Set Test Parameters:
+  - Parameter action client that sends a goal to the set_test_parameters action server. Goal parameters include any information for the current trial.
+  - Signals the hardware to get ready for a trial.
+  - Source code: [parameter_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/parameter_ac.py)
+4) Start Data Collection:
+  - Stage action client that sends a goal to the start_data_collection action server. 
+  - Signals the start of a trial and to start publishing data.
+  - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
+5) User Arm Control:
+  - Stage action client that sends a goal to the start_arm_sequence action server. 
+  - Signals the arm controller to start controlling the arm.
+  - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
+6) Stop Data Collection:
+  - Stage action client that sends a goal to the stop_data_collection action server. 
+  - Signals the end of a trial and to stop publishing data.
+  - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
+7) Reset:
+  - Stage action client that sends a goal to the reset_hardware action server. 
+  - Signals the hardware to reset itself since the trial has finished.
+  - Source code: [stage_ac.py](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/infrastructure_behaviors/infrastructure_flexbe_states/src/infrastructure_flexbe_states/stage_ac.py)
