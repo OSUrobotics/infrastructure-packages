@@ -64,6 +64,8 @@
 ### Interfacing with an arm
 Place all path planning and moveit commands in the "start_arm_sequence" action server located in arm_control. (see [example_arm_controller.py](https://github.com/OSUrobotics/infrastructure-arms/blob/main/arm_control/src/example_arm_controller.py))
 
+Connect USB from the arm into the host machine BEFORE launching the "infra_env" container. If container is already started, you must stop it and then restart it again after the USB is connected for the arm. 
+
 ### Connecting to an apparatus
 To be able to use one of the apparatuses, you must set up ROS communication between the main machine (within docker container) and the raspberry PI for the desired apparatus. 
 
