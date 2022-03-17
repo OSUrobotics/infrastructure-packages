@@ -7,12 +7,12 @@
 ## Setup:
 
 - Notes: 
-    - if you added the user to the docker group, it is not necessary to run these commands with sudo
+    - if you added the user to the docker group, it is not necessary to run the following commands with sudo
     - If the docker container is already made on the machine, start the container and skip to step 3.
 
 1. Build an image with the infrastructure Dockerfile
     ```console
-    docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
+    sudo docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
     ```
 2. Create and start the docker container from the image
    ```console
@@ -21,15 +21,15 @@
    ```
 3. This will have started a detached container called "infra_env". You can check if it is running with:
     ```console
-    docker ps
+    sudo docker ps
     ```
    If the docker container gets stopped for any reason, you can start it again with:
     ```console
-    docker start infra_env
+    sudo docker start infra_env
     ```
 4. Attach the container to a desired terminal: (or use your favorite docker extension, like [visual studio codes'](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) to access the container)
     ```console
-    docker attach infra_env
+    sudo docker attach infra_env
     ```
 5. **Change Branches in submodules** to the desired branches. 
     To check which branch each submodule is in, use this command in the respective submodule:
