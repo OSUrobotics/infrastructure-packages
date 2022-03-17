@@ -6,6 +6,10 @@
 
 ## Setup:
 
+- Notes: 
+    - if you added the user to the docker group, it is not necessary to run these commands with sudo
+    - If the docker container is already made on the machine, start the container and skip to step 3.
+
 1. Build an image with the infrastructure Dockerfile
     ```console
     docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
