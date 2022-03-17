@@ -45,7 +45,7 @@ Guide:
   sudo docker exec -it <name_of_container> bash
   ```
   
-## Add user to docker group(removes the need for sudo when doing docker commands)
+## Add user to docker group (removes the need for sudo when doing docker commands)
 * https://docs.docker.com/engine/install/linux-postinstall/
 
 
