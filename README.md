@@ -159,7 +159,7 @@ If not done already, make sure gui support is enabled for docker containers on t
 ```console
 xhost +local:docker &> /dev/null # run in a host terminal, not container!
 ```
-__Note:__ this needs to be done for every new session on the PC
+__Note:__ this needs to be done for every new session on the PC. If you don't want to do this evertime, then copy this command into the .bashrc file for your host machine located in the home directory.
 
 In the container:
 ```console
