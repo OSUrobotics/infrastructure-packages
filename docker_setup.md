@@ -34,6 +34,8 @@ Guide:
   ```console
   xhost +local:docker &> /dev/null
   ```
+  - Add it to the .bashrc file for the host machine if you don't want to run this command every session.
+  
 * Start the container: 
   ```console
   sudo docker start <name_of_container>
