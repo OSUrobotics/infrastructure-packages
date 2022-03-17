@@ -69,7 +69,6 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
 
 1. SSH into the PI for the desired apparatus
     - Make sure PI is connected to same network as the PC via ethernet or wifi
-    - Password for all apparatuses: *Password* 
     - testbed:
         ```console
         ssh ubuntu@raspi-testbed.local
