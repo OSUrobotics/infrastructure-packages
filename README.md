@@ -155,9 +155,6 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
             printenv ROS_MASTER_URI
             ```
     - Kill the roscore once finished (Ctrl-C)
-
-### Setting up remote home (for sensor data from door/drawer)
-ADD
     
 ### Launching
 
