@@ -69,7 +69,7 @@ class TestControlState(EventState):
             self._apparatus = raw_info[0]
             raw_info = raw_info[1:]
 
-             if(self._apparatus == "testbed"):
+            if(self._apparatus == "testbed"):
                 if len(raw_info) == 0:
                     raise IOError("Empty CSV. Be sure to include header line and test information")
                 for test in raw_info:
