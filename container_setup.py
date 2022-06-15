@@ -67,3 +67,7 @@ if __name__ == '__main__':
 
     value = input(c_print)
     subprocess.run(f'git checkout {c[int(value)]}', shell=True)
+
+    os.chdir('/root/infrastructure_ws/')
+    subprocess.run('catkin_make', shell=True)
+    subprocess.run('source devel/setup.bash', shell=True)
