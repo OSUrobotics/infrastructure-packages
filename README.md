@@ -12,7 +12,7 @@
 
 1. Build an image with the infrastructure Dockerfile
     ```console
-    sudo docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/lab_Dockerfiles.git#master:infrastructure_base
+    sudo docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/Grimmlins_Dockerfiles.git#main:dockerfiles/infrastructure_base
     ```
 2. Create and start the docker container from the image
    ```console
