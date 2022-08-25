@@ -80,9 +80,10 @@ class DataCollection():
                 self.time_stamp.collection_start_time = rospy.Time.now()
 		
 		# start rosbag recording
-		self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
-		tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor' " + self.robot_jointState_topic)
-		self.rosbag = subprocess.Popen(tokenized_args)
+		if(self.record_rosbags):
+			self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
+			tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor' " + self.robot_jointState_topic)
+			self.rosbag = subprocess.Popen(tokenized_args)
 
 		self.start_collection.set_succeeded(StageResult(result = 0), text="SUCCESS")
 			
@@ -95,8 +96,8 @@ class DataCollection():
 			return
 		
 		# stop rosbag recording
-		self.rosbag.send_signal(signal.SIGINT)
-		# os.system("rosnode kill " + self.rosbag_name)
+		if(self.record_rosbags):
+			self.rosbag.send_signal(signal.SIGINT)
 
 		self.collection_flag = False
                 self.time_stamp.collection_end_time = rospy.Time.now()
