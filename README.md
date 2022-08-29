@@ -12,11 +12,13 @@
 
 1. Build an image with the infrastructure Dockerfile
     ```console
-    sudo docker build -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/Grimmlins_Dockerfiles.git#main:dockerfiles/infrastructure_base
+    sudo docker build --no-cache -t infrastructure-packages:grimmlins https://github.com/OSUrobotics/Grimmlins_Dockerfiles.git#main:dockerfiles/infrastructure_base
     ```
 2. Create and start the docker container from the image
    ```console
    DOCKER_COMMON_ARGS="--gpus all --env=NVIDIA_VISIBLE_DEVICES=all --env=NVIDIA_DRIVER_CAPABILITIES=all --env=DISPLAY --env=QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
+   ```
+   ```console,
    sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --name infra_env infrastructure-packages:grimmlins
    ```
 3. This will have started a detached container called "infra_env". You can check if it is running with:
