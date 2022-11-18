@@ -58,7 +58,8 @@ class TestControlState(EventState):
             self._testbed_params = {
                 "object" : 0,
                 "angle" : 0,
-                "trials" : 0
+                "trials" : 0,
+                "index" : 0
                 }
             self._other_params = {
                 "resistance" : 0,
@@ -77,6 +78,7 @@ class TestControlState(EventState):
                     self._testbed_params["object"] = float(parsed_row[0])
                     self._testbed_params["angle"] = float(parsed_row[1])
                     self._testbed_params["trials"] = float(parsed_row[2])
+                    self._testbed_params["index"] = float(parsed_row[3])
                     self._tests.append(copy.deepcopy(self._testbed_params))
 
             elif(self._apparatus == "drawer/door"):
