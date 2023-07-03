@@ -1,0 +1,10 @@
+<launch>
+
+<arg name="id" default="0"/>
+
+<param name="camera_id" type="int" value="$(arg id)" />
+
+<node pkg="data_collection" name="video_$(arg id)" type="video_capture.py" output="screen"/>
+
+</launch>
+

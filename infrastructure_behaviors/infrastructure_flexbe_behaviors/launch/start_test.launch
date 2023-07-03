@@ -27,7 +27,7 @@
 
 <node pkg="data_collection" name="data_collection" type="data_collection.py" output="screen"/>
 
-<node pkg="arm_control" name="example_arm_controller" type="example_arm_controller.py" output="screen"/>
+<!-- <node pkg="arm_control" name="example_arm_controller" type="example_arm_controller.py" output="screen"/> -->
 
 
 
