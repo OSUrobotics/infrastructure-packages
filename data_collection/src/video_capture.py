@@ -30,7 +30,7 @@ class Camera():
         self.loop_rate = rospy.Rate(30)
 
         # Publish the images
-        self.pub = rospy.Publisher('camera_'+str(id), CompressedImage,queue_size=10)
+        self.pub = rospy.Publisher('mounted_camera_'+str(id)+'/compressed', CompressedImage,queue_size=10)
         self.publish_video(id)
         rospy.sleep(4)
 
@@ -50,7 +50,7 @@ class Camera():
             msg = CompressedImage()
             msg.header.stamp = rospy.Time.now()
             msg.format = "jpeg"
-            msg.data = np.array(cv2.imencode('.jpg', frame)[1]).tostring()
+            msg.data = np.array(cv2.imencode('.png', frame)[1]).tostring()
             counter = 0
             # Get the image
             self.pub.publish(msg)

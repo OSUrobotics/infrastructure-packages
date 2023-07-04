@@ -55,6 +55,19 @@ class DataCollection():
             parent = roslaunch.parent.ROSLaunchParent(uuid, launch_file)
 
             parent.start()
+
+            cli_args = ['data_collection','start_video.launch','id:=4']
+
+    
+            roslaunch_file = roslaunch.rlutil.resolve_launch_arguments(cli_args)[0]
+            roslaunch_args = cli_args[2:]
+            launch_file = [(roslaunch_file, roslaunch_args)]
+            print("Launhc file: ", launch_file)
+
+            uuid = roslaunch.rlutil.get_or_generate_uuid(None, False) 
+            parent = roslaunch.parent.ROSLaunchParent(uuid, launch_file)
+
+            parent.start()
             rospy.loginfo("Launched")
 
 
@@ -77,7 +90,7 @@ class DataCollection():
         if(self.record_rosbags):
             self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
             print("Rosbag name: ", self.rosbag_name)
-            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)camera(.*)' " + self.robot_jointState_topic)
+            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)' " + self.robot_jointState_topic + " /camera/color/image_raw/compressed /camera/depth/image_raw /my_gen3/gripper_position")
 
             self.rosbag = subprocess.Popen(tokenized_args)
 
