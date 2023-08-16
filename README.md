@@ -21,9 +21,9 @@
    ```console,
    sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --name infra_env infrastructure-packages:grimmlins
    ```
-2.1 If the above doesn't work, try:
+2. If the above doesn't work, try:
     ```console,
-    sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --env=DISPLAY --env=NVIDIA_VISIBLE_DEVICES=all --env=NVIDIA_DRIVER_CAPABILITIES=all --env=QT_X11_NO_MITSHM=1 --runtime=nvidia -v /tmp/.X11-    unix:/tmp/.X11-unix --name infra_env_arm_v0 infrastructure-packages:grimmlins
+    sudo docker run -it -d --net=host --privileged $DOCKER_COMMON_ARGS --env=DISPLAY --env=NVIDIA_VISIBLE_DEVICES=all --env=NVIDIA_DRIVER_CAPABILITIES=all --env=QT_X11_NO_MITSHM=1 --runtime=nvidia -v /tmp/.X11-unix:/tmp/.X11-unix --name infra_env_arm_v0 infrastructure-packages:grimmlins
     ```
 3. This will have started a detached container called "infra_env". You can check if it is running with:
     ```console
