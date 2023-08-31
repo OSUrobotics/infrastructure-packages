@@ -72,7 +72,7 @@ class System_Behaviour_PiSM(Behavior):
 			# x:547 y:139
 			OperatableStateMachine.add('Set Test Parameters',
 										ParameterActionClient(topic=self.parameter_topic),
-										transitions={'completed': 'Reset', 'failed': 'failed'},
+										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'trial_params': 'trial_params'})
 
@@ -85,7 +85,7 @@ class System_Behaviour_PiSM(Behavior):
 			# x:702 y:404
 			OperatableStateMachine.add('Stop Data Collection',
 										StageActionClient(topic=self.stop_data_collection_topic),
-										transitions={'completed': 'Trial Control', 'failed': 'failed'},
+										transitions={'completed': 'Reset', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:298 y:127
@@ -101,10 +101,10 @@ class System_Behaviour_PiSM(Behavior):
 										transitions={'completed': 'Stop Data Collection', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:508 y:308
+			# x:542 y:293
 			OperatableStateMachine.add('Reset',
 										StageActionClient(topic=self.reset_topic),
-										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
+										transitions={'completed': 'Trial Control', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 

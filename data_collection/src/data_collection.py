@@ -43,7 +43,7 @@ class DataCollection():
         if(record_parameter == True):
             # If we are recording video, start camera publishers
             # Based on a string of camera ids (i.e. "123" records from /dev/video1, /dev/video2, and /dev/video3)
-            cli_args = ['data_collection','start_video.launch','id:=2']
+            cli_args = ['data_collection','start_video.launch','id:=0']
 
     
             roslaunch_file = roslaunch.rlutil.resolve_launch_arguments(cli_args)[0]
@@ -56,7 +56,7 @@ class DataCollection():
 
             parent.start()
 
-            cli_args = ['data_collection','start_video.launch','id:=4']
+            cli_args = ['data_collection','start_video.launch','id:=2']
 
     
             roslaunch_file = roslaunch.rlutil.resolve_launch_arguments(cli_args)[0]
