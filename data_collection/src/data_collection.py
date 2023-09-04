@@ -90,7 +90,7 @@ class DataCollection():
         if(self.record_rosbags):
             self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
             print("Rosbag name: ", self.rosbag_name)
-            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)|(.*)_metadata' " + self.robot_jointState_topic + " /camera/color/image_raw/compressed /camera/depth/image_raw")
+            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)|(.*)_metadata|/camera/color/image_raw/compressed|/camera/depth/image_raw' " + self.robot_jointState_topic)
 
             self.rosbag = subprocess.Popen(tokenized_args)
 
