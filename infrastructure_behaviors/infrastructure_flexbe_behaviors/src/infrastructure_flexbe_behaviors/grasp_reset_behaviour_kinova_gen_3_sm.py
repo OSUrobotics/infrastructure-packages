@@ -22,15 +22,15 @@ from infrastructure_flexbe_states.trial_control_state import TrialControlState
 Created on 7/2/2023
 @author: Keegan, modified by Kyle
 '''
-class Testbed_Behaviour_Kinova_Gen_3SM(Behavior):
+class Grasp_Reset_Behaviour_Kinova_Gen_3SM(Behavior):
 	'''
-	Behavior for use with the testbed and Kinova Gen 3 arm. Full functionallity, including object swapping.
+	Behavior for use with the grasp reset and Kinova Gen 3 arm. Full functionallity, including object swapping.
 	'''
 
 
 	def __init__(self):
-		super(Testbed_Behaviour_Kinova_Gen_3SM, self).__init__()
-		self.name = 'Testbed_Behaviour_Kinova_Gen_3'
+		super(Grasp_Reset_Behaviour_Kinova_Gen_3SM, self).__init__()
+		self.name = 'Grasp_Reset_Behaviour_Kinova_Gen_3'
 
 		# parameters of this behavior
 		self.add_parameter('start_data_collection_topic', 'start_data_collection')

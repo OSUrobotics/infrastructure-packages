@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="Testbed_Behaviour_Kinova_Gen_3">
+<behavior name="Door_Drawer_Behaviour">
 
-	<executable package_path="infrastructure_flexbe_behaviors.testbed_behaviour_kinova_gen_3_sm" class="Testbed_Behaviour_Kinova_Gen_3SM" />
+	<executable package_path="infrastructure_flexbe_behaviors.door_drawer_behaviour_sm" class="Door_Drawer_BehaviourSM" />
 	<tagstring></tagstring>
-	<author>Keegan, modified by Kyle</author>
-	<date>7/2/2023</date>
+	<author>Kyle DuFrene</author>
+	<date>9/03/23</date>
 	<description>
-		Behavior for use with the testbed and Kinova Gen 3 arm. Full functionallity, including object swapping.
+		Door drawer behavior
 	</description>
 
 
@@ -24,9 +24,9 @@
 
 		<param type="text" name="stop_data_collection_topic" default="stop_data_collection" label="stop_data_collection_topic" hint="Sets the stop_data_collection_topic" />
 
-		<param type="text" name="arm_control_topic" default="my_gen3/start_arm_sequence" label="arm_control_topic" hint="Sets the arm_control_topic" />
+		<param type="text" name="arm_control_topic" default="start_arm_sequence" label="arm_control_topic" hint="Sets the arm_control_topic" />
 
-		<param type="yaml" name="session_info" default="" label="session_info" hint="Sets the session_info">
+		<param type="yaml" name="session_info" default="/root/infrastructure_ws/src/infrastructure-packages/drawer_test.csv" label="session_info" hint="Sets the session_info">
 			<key name="" />
 		</param>
 

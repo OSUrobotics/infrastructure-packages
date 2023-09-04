@@ -19,18 +19,18 @@ from infrastructure_flexbe_states.trial_control_state import TrialControlState
 
 
 '''
-Created on 3/22/21
-@author: Keegan Nave
+Created on 9/03/23
+@author: Kyle DuFrene
 '''
-class System_Behaviour_PiSM(Behavior):
+class Door_Drawer_BehaviourSM(Behavior):
 	'''
-	Newest replacement behaviour for use with the raspberry Pi's. Certain states are not yet implemented fully.
+	Door drawer behavior
 	'''
 
 
 	def __init__(self):
-		super(System_Behaviour_PiSM, self).__init__()
-		self.name = 'System_Behaviour_Pi'
+		super(Door_Drawer_BehaviourSM, self).__init__()
+		self.name = 'Door_Drawer_Behaviour'
 
 		# parameters of this behavior
 		self.add_parameter('start_data_collection_topic', 'start_data_collection')
