@@ -52,7 +52,7 @@ class Testbed_Behaviour_Kinova_Gen_3SM(Behavior):
 
 
 	def create(self):
-		# x:840 y:92, x:36 y:676
+		# x:139 y:119, x:43 y:266
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -69,39 +69,39 @@ class Testbed_Behaviour_Kinova_Gen_3SM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'trial_info': 'trial_info'})
 
-			# x:547 y:139
+			# x:574 y:35
 			OperatableStateMachine.add('Set Test Parameters',
 										ParameterActionClient(topic=self.parameter_topic),
 										transitions={'completed': 'Reset', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'trial_params': 'trial_params'})
 
-			# x:786 y:171
+			# x:576 y:225
 			OperatableStateMachine.add('Start Data Collection',
 										StageActionClient(topic=self.start_data_collection_topic),
 										transitions={'completed': 'User Arm Control', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:702 y:404
+			# x:338 y:130
 			OperatableStateMachine.add('Stop Data Collection',
 										StageActionClient(topic=self.stop_data_collection_topic),
 										transitions={'completed': 'Trial Control', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:298 y:127
+			# x:339 y:34
 			OperatableStateMachine.add('Trial Control',
 										TrialControlState(),
 										transitions={'continue': 'Set Test Parameters', 'failed': 'failed', 'completed': 'Test Control'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'trial_info': 'trial_info', 'trial_params': 'trial_params'})
 
-			# x:851 y:308
+			# x:338 y:225
 			OperatableStateMachine.add('User Arm Control',
 										StageActionClient(topic=self.arm_control_topic),
 										transitions={'completed': 'Stop Data Collection', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:508 y:308
+			# x:575 y:132
 			OperatableStateMachine.add('Reset',
 										StageActionClient(topic=self.reset_topic),
 										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
@@ -115,4 +115,3 @@ class Testbed_Behaviour_Kinova_Gen_3SM(Behavior):
 	# [MANUAL_FUNC]
 	
 	# [/MANUAL_FUNC]
-

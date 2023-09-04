@@ -86,8 +86,8 @@ class TestControlState(EventState):
                     raise IOError("Empty CSV. Be sure to include header line and test information")
                 for test in raw_info:
                     parsed_row = test.split(",")
-                    self._other_params["resistance"] = float(parsed_row[0])
-                    self._other_params["trials"] = float(parsed_row[1])
+                    self._other_params["trials"] = float(parsed_row[0])
+                    self._other_params["resistance"] = float(parsed_row[1])
                     self._tests.append(copy.deepcopy(self._other_params))
 
             else:

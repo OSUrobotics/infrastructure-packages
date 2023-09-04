@@ -43,7 +43,7 @@ class DataCollection():
         if(record_parameter == True):
             # If we are recording video, start camera publishers
             # Based on a string of camera ids (i.e. "123" records from /dev/video1, /dev/video2, and /dev/video3)
-            cli_args = ['data_collection','start_video.launch','id:=2']
+            cli_args = ['data_collection','start_video.launch','id:=0']
 
     
             roslaunch_file = roslaunch.rlutil.resolve_launch_arguments(cli_args)[0]
@@ -56,7 +56,7 @@ class DataCollection():
 
             parent.start()
 
-            cli_args = ['data_collection','start_video.launch','id:=4']
+            cli_args = ['data_collection','start_video.launch','id:=2']
 
     
             roslaunch_file = roslaunch.rlutil.resolve_launch_arguments(cli_args)[0]
@@ -90,7 +90,7 @@ class DataCollection():
         if(self.record_rosbags):
             self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
             print("Rosbag name: ", self.rosbag_name)
-            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)' " + self.robot_jointState_topic + " /camera/color/image_raw/compressed /camera/depth/image_raw /my_gen3/gripper_position")
+            tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)|(.*)_metadata' " + self.robot_jointState_topic + " /camera/color/image_raw/compressed /camera/depth/image_raw")
 
             self.rosbag = subprocess.Popen(tokenized_args)
 

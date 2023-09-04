@@ -42,9 +42,11 @@ class Camera():
             ret, frame = cam.read()
             if not ret: 
                 counter += 1
-                if counter > 10:
+                if counter > 20:
                     err_str = 'Failed to get video for camera ' + str(id)
                     rospy.logerr(err_str)
+                    sleep(.05)
+                    counter = 0
                 continue
 
             msg = CompressedImage()
