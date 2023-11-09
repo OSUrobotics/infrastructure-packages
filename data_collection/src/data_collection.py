@@ -88,7 +88,7 @@ class DataCollection():
         
         # start rosbag recording
         if(self.record_rosbags):
-            self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count)
+            self.rosbag_name = self.rosbags_dir + self.name_parameter + "_trial_" + str(self.trial_count+8)
             print("Rosbag name: ", self.rosbag_name)
             tokenized_args = shlex.split("rosbag record -O " + self.rosbag_name + " -e '(.*)_infsensor|(.*)mounted_camera_(.*)|/arm_trial_metadata|/camera/color/image_raw/compressed|/camera/depth/image_raw' " + self.robot_jointState_topic)
 

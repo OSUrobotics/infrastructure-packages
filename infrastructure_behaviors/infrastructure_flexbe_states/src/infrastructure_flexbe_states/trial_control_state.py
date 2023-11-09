@@ -42,7 +42,7 @@ class TrialControlState(EventState):
                 #print(self._number_of_trials)
                 print("PARAMTERS IN TRIAL CONTROL STATE")
                 print(self._trial_params)
-                self.pub.publish(std_msgs.msg.Float32(float(self._trial_params[1])))
+                self.pub.publish(std_msgs.msg.Float32(float(self._trial_params[0])))
                 userdata.trial_params = self._trial_params
                 self.num_trials -= 1
                 return "continue"
