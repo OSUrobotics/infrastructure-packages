@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="tes_nodes">
+
+	<executable package_path="infrastructure_flexbe_behaviors.tes_nodes_sm" class="tes_nodesSM" />
+	<tagstring></tagstring>
+	<author>bf</author>
+	<date>Wed Nov 15 2023</date>
+	<description>
+		temoprary node test
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

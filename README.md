@@ -1,3 +1,11 @@
+roscore
+rosparam load /root/infrastructure_ws/src/infrastructure-packages/infrastructure_behaviors/infrastructure_flexbe_behaviors/cfg/gen3_moveit_params.yaml
+roslaunch infrastructure_flexbe_behaviors start_gen3_test_gpd.launch 
+rosrun dataset_test xyz_poses.py 
+
+On pi:
+roslaunch infrastructure_raspi start_raspi_nodes.launch
+
 # infrastructure-packages with Docker Containers
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
 

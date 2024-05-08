@@ -95,6 +95,8 @@ class TestControlState(EventState):
                 raise IOError("Invalid header line")
 
             self._num_tests = len(self._tests)
+            
+            rospy.set_param('/trial_num', rospy.get_param("/starting_trial_num")-1)
 
 
         def execute(self, userdata):

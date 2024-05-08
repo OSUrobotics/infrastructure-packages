@@ -30,7 +30,11 @@ class TrialControlState(EventState):
             # Store state parameters for later use.
             self.num_trials = None
             self._trial_params = []
-
+            self.options = [1, 250, 137, 333, 5, 400, 327, 144, 68, 128, 410, 31, 299, 305, 106, 199, 320, 89, 415, 288,
+                            94, 457, 392, 440, 236, 437, 423, 290, 418, 138, 75, 348, 198,  74, 404, 413, 409,   7, 380,  40]
+            if rospy.get_param("/starting_trial_num") > 1:
+                for i in range(rospy.get_param("/starting_trial_num")-1):
+                    self.options.pop(0)
             self.pub = rospy.Publisher('reset_metadata', std_msgs.msg.Float32, queue_size=10)
 
 
@@ -39,11 +43,21 @@ class TrialControlState(EventState):
         def execute(self, userdata):
             #if trials remain return continue, if not return complete, if direction is 0 return failed
             if(self.num_trials > 0):
+                rospy.set_param("/trial_num", self.options.pop(0))#rospy.get_param("/trial_num")+1)
                 #print(self._number_of_trials)
                 print("PARAMTERS IN TRIAL CONTROL STATE")
                 print(self._trial_params)
-                self.pub.publish(std_msgs.msg.Float32(float(self._trial_params[1])))
+                self.pub.publish(std_msgs.msg.Float32(float(self._trial_params[0])))
                 userdata.trial_params = self._trial_params
+                # print(self._trial_params[0])
+                # print(rospy.get_param("/trial_num"))
+                # print(rospy.get_param("/trial_num")+1)
+                # rospy.set_param('/trial_num', rospy.get_param("/starting_trial_num")
+                # if + 1)
+                # if not (rospy.get_param('angle') == int(self._trial_params[1])):
+                #     # If angle changed, then start trials at 1
+                #     rospy.set_param("/trial_num", 1)
+                rospy.set_param('/angle', int(self._trial_params[1]))
                 self.num_trials -= 1
                 return "continue"
 
