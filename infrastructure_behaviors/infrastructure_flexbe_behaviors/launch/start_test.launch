@@ -6,6 +6,7 @@
 <arg name="robot_jointState_topic" default="/"/>
 
 <param name="test_name" type="string" value="$(arg name)" />
+<param name="starting_trial_num" type="int" value="0" />
 <param name="record_video" type="boolean" value="$(arg video)" />
 <param name="record_trial_rosbags" type="boolean" value="$(arg collect_data)" />
 <param name="robot_joints" type="string" value="$(arg robot_jointState_topic)" />
@@ -26,8 +27,10 @@
        args="record -o $(find data_collection)/stored_data/rosbags/timestamps -e '(.*)_timestamps'" if="$(arg collect_data)"/>   -->
 
 <node pkg="data_collection" name="data_collection" type="data_collection.py" output="screen"/>
+<node pkg="infrastructure_raspi" name="example_arm" type="example_arm_controller.py" output="screen"/>
 
-<node pkg="arm_control" name="example_arm_controller" type="example_arm_controller.py" output="screen"/>
+
+<!-- <node pkg="arm_control" name="example_arm_controller" type="example_arm_controller.py" output="screen"/> -->
 
 
 

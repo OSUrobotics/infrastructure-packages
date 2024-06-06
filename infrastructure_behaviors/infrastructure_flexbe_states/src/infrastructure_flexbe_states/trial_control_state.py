@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import copy
+import std_msgs.msg
 
 from flexbe_core import EventState, Logger
 
@@ -29,13 +30,29 @@ class TrialControlState(EventState):
             # Store state parameters for later use.
             self.num_trials = None
             self._trial_params = []
+            self.pub = rospy.Publisher('reset_metadata', std_msgs.msg.Float32, queue_size=10)
+
+
 
 
         def execute(self, userdata):
             #if trials remain return continue, if not return complete, if direction is 0 return failed
+            print(self.num_trials)
             if(self.num_trials > 0):
-                #print(self._number_of_trials)
+                
+                print("PARAMTERS IN TRIAL CONTROL STATE")
+                print(self._trial_params)
+                self.pub.publish(std_msgs.msg.Float32(float(self._trial_params[0])))
                 userdata.trial_params = self._trial_params
+                # print(self._trial_params[0])
+                # print(rospy.get_param("/trial_num"))
+                # print(rospy.get_param("/trial_num")+1)
+                # rospy.set_param('/trial_num', rospy.get_param("/starting_trial_num")
+                # if + 1)
+                # if not (rospy.get_param('angle') == int(self._trial_params[1])):
+                #     # If angle changed, then start trials at 1
+                #     rospy.set_param("/trial_num", 1)
+                # rospy.set_param('/angle', int(self._trial_params[1]))
                 self.num_trials -= 1
                 return "continue"
 

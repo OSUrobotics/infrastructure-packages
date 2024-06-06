@@ -8,6 +8,7 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
+from armada_flexbe_behaviors.pickandplace_sm import PickAndPlaceSM
 from infrastructure_flexbe_states.parameter_ac import ParameterActionClient
 from infrastructure_flexbe_states.stage_ac import StageActionClient
 from infrastructure_flexbe_states.test_control_state import TestControlState
@@ -19,28 +20,29 @@ from infrastructure_flexbe_states.trial_control_state import TrialControlState
 
 
 '''
-Created on 3/22/21
-@author: Keegan Nave
+Created on 7/2/2023
+@author: Keegan, modified by Kyle
 '''
-class System_Behaviour_PiSM(Behavior):
+class Grasp_Reset_GPD_Behaviour_Kinova_Gen_3SM(Behavior):
 	'''
-	Newest replacement behaviour for use with the raspberry Pi's. Certain states are not yet implemented fully.
+	Behavior for use with the grasp reset and Kinova Gen 3 arm. Full functionallity, including Grasp Pose Detection.
 	'''
 
 
 	def __init__(self):
-		super(System_Behaviour_PiSM, self).__init__()
-		self.name = 'System_Behaviour_Pi'
+		super(Grasp_Reset_GPD_Behaviour_Kinova_Gen_3SM, self).__init__()
+		self.name = 'Grasp_Reset_GPD_Behaviour_Kinova_Gen_3'
 
 		# parameters of this behavior
 		self.add_parameter('start_data_collection_topic', 'start_data_collection')
 		self.add_parameter('parameter_topic', 'set_test_parameters')
 		self.add_parameter('reset_topic', 'reset_hardware')
 		self.add_parameter('stop_data_collection_topic', 'stop_data_collection')
-		self.add_parameter('arm_control_topic', 'start_arm_sequence')
+		self.add_parameter('arm_control_topic', 'my_gen3/start_arm_sequence')
 		self.add_parameter('session_info', dict())
 
 		# references to used behaviors
+		self.add_behavior(PickAndPlaceSM, 'PickAndPlace')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -52,7 +54,7 @@ class System_Behaviour_PiSM(Behavior):
 
 
 	def create(self):
-		# x:840 y:92, x:36 y:676
+		# x:217 y:96, x:43 y:266
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -69,43 +71,43 @@ class System_Behaviour_PiSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'trial_info': 'trial_info'})
 
-			# x:547 y:139
+			# x:575 y:132
+			OperatableStateMachine.add('Reset',
+										StageActionClient(topic=self.reset_topic),
+										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
+										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:574 y:35
 			OperatableStateMachine.add('Set Test Parameters',
 										ParameterActionClient(topic=self.parameter_topic),
-										transitions={'completed': 'Start Data Collection', 'failed': 'failed'},
+										transitions={'completed': 'Reset', 'failed': 'failed'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'trial_params': 'trial_params'})
 
-			# x:786 y:171
+			# x:576 y:225
 			OperatableStateMachine.add('Start Data Collection',
 										StageActionClient(topic=self.start_data_collection_topic),
-										transitions={'completed': 'User Arm Control', 'failed': 'failed'},
+										transitions={'completed': 'PickAndPlace', 'failed': 'PickAndPlace'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:702 y:404
+			# x:338 y:130
 			OperatableStateMachine.add('Stop Data Collection',
 										StageActionClient(topic=self.stop_data_collection_topic),
-										transitions={'completed': 'Reset', 'failed': 'failed'},
+										transitions={'completed': 'Trial Control', 'failed': 'Trial Control'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:298 y:127
+			# x:339 y:34
 			OperatableStateMachine.add('Trial Control',
 										TrialControlState(),
 										transitions={'continue': 'Set Test Parameters', 'failed': 'failed', 'completed': 'Test Control'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'completed': Autonomy.Off},
 										remapping={'trial_info': 'trial_info', 'trial_params': 'trial_params'})
 
-			# x:851 y:308
-			OperatableStateMachine.add('User Arm Control',
-										StageActionClient(topic=self.arm_control_topic),
-										transitions={'completed': 'Stop Data Collection', 'failed': 'failed'},
-										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:542 y:293
-			OperatableStateMachine.add('Reset',
-										StageActionClient(topic=self.reset_topic),
-										transitions={'completed': 'Trial Control', 'failed': 'failed'},
-										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
+			# x:330 y:294
+			OperatableStateMachine.add('PickAndPlace',
+										self.use_behavior(PickAndPlaceSM, 'PickAndPlace'),
+										transitions={'finished': 'Stop Data Collection', 'failed': 'Stop Data Collection'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

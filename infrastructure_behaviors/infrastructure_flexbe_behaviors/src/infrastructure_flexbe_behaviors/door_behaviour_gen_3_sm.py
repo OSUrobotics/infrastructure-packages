@@ -19,25 +19,25 @@ from infrastructure_flexbe_states.trial_control_state import TrialControlState
 
 
 '''
-Created on 3/22/21
-@author: Keegan Nave
+Created on 9/03/23
+@author: Kyle DuFrene
 '''
-class System_Behaviour_PiSM(Behavior):
+class Door_Behaviour_Gen_3SM(Behavior):
 	'''
-	Newest replacement behaviour for use with the raspberry Pi's. Certain states are not yet implemented fully.
+	Door drawer behavior with the Kinova Gen 3 arm.
 	'''
 
 
 	def __init__(self):
-		super(System_Behaviour_PiSM, self).__init__()
-		self.name = 'System_Behaviour_Pi'
+		super(Door_Behaviour_Gen_3SM, self).__init__()
+		self.name = 'Door_Behaviour_Gen_3'
 
 		# parameters of this behavior
 		self.add_parameter('start_data_collection_topic', 'start_data_collection')
 		self.add_parameter('parameter_topic', 'set_test_parameters')
 		self.add_parameter('reset_topic', 'reset_hardware')
 		self.add_parameter('stop_data_collection_topic', 'stop_data_collection')
-		self.add_parameter('arm_control_topic', 'start_arm_sequence')
+		self.add_parameter('arm_control_topic', 'my_gen3/start_arm_sequence')
 		self.add_parameter('session_info', dict())
 
 		# references to used behaviors

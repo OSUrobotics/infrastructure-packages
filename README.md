@@ -1,3 +1,11 @@
+roscore
+rosparam load /root/infrastructure_ws/src/infrastructure-packages/infrastructure_behaviors/infrastructure_flexbe_behaviors/cfg/gen3_moveit_params.yaml
+roslaunch infrastructure_flexbe_behaviors start_gen3_test_gpd.launch 
+rosrun dataset_test xyz_poses.py 
+
+On pi:
+roslaunch infrastructure_raspi start_raspi_nodes.launch
+
 # infrastructure-packages with Docker Containers
 #### All the Needed packages for the testing Infrastructure (Updated Raspberry Pi Version)
 
@@ -85,26 +93,17 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     - Make sure PI is connected to same network as the PC via ethernet or wifi
     - testbed:
         ```console
-        ssh ubuntu@raspi-testbed.local
+        ssh ubuntu@testbed-osu.local
         ```
     - door:
         ```console
-        ssh ubuntu@raspi-door.local
+        ssh ubuntu@door-osu.local
         ```
     - drawer:
         ```console
-        ssh ubuntu@raspi-drawer.local
+        ssh ubuntu@drawer-osu.local
         ```
-2. Make sure you are using the correct workspace and branches on PI:
-    - If using _test_infra_system_ workspace (new file structure):
-        - Make sure infrastructure-raspi submodule is on correct apparatus branch
-        - Build and source workspace after branch changes (if any):
-            ```console
-            cd ~/test_infra_system
-            catkin build
-            source devel/setup.bash
-            ```
-    - If using _infrastructure_system_ (old file structure):
+2. Make sure you are using the correct workspace and branches on PI (git checkout in infrastructure_raspi), then:
         ```console
         cd ~/infrastructure_system
         catkin build
@@ -112,31 +111,13 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
         ```
 3. On the master machine (Container):
     ```console
-    export ROS_IP=<PC-IP>
-    export ROS_MASTER_URI=http://<PC-IP>:11311
-    ```
-    The IP of the master machine can be found by checking the inet of the ethernet port using:
-    ```console
-    ifconfig
-    ```
-    example:
-    ```
-    tesbed@testbed-tower:~$ export ROS_IP=192.168.2.206
-    tesbed@testbed-tower:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+    export ROS_HOSTNAME=<PC-HOSTNAME>
+    export ROS_MASTER_URI=http://<HOSTNAME>:11311
     ```
 4. On the listener machine (PI):
     ```console
-    export ROS_IP=<PI-IP>
-    export ROS_MASTER_URI=http://<PC-IP>:11311 # same as master machine
-    ```
-    The IP of the listener machine can be found by checking the inet of the ethernet port using:
-    ```console
-    ifconfig
-    ```
-    example:
-    ```
-    ubuntu@raspi-testbed:~$ export ROS_IP=192.168.2.242
-    ubuntu@raspi-testbed:~$ export ROS_MASTER_URI=http://192.168.2.206:11311
+    export ROS_HOSTNAME=<PI-HOSTNAME>
+    ROS_MASTER_URI=http://<HOSTNAME>:11311 # same as master machine
     ```
 5. (optional) Check that communication is working:
     - Start a roscore on the container:
@@ -170,7 +151,7 @@ xhost +local:docker &> /dev/null # run in a host terminal, not container!
 ```
 __Note:__ this needs to be done for every new session on the PC. If you don't want to do this evertime, then copy this command into the .bashrc file for your host machine located in the home directory.
 
-In the container:
+For the door/drawer and basic run/testing, launch the example test file:
 ```console
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
 ```
@@ -183,26 +164,29 @@ name:=<string> (name given to rosbags, csv files, and videos)
 video:=true (activates recording for a camera connected to the main PC. Defaults to false)
 ```
 On the PI:
-- If using _test_infra_system_ (new file structure):
     ```console
     roslaunch infrastructure_raspi start_raspi_nodes.launch
     ```
-- If using _infrastructure_system_ (old file structure):
-    ```console
-    roslaunch infrastructure_raspi start_raspi_nodes.launch apparatus:=<name>
-    ```
-    valid apparatus names:
-    ```
-    testbed
-    drawer
-    door
-    ```
+
+For launching the Grasp Reset w/ the Kinova Gen 3 and GPD:
+```console
+roslaunch armada_flexbe_utilities gen3_pick_and_place.launch 
+```
+For additionally including the interface:
+```console
+roslaunch RemasteredInterface main_page.launch
+```
+
 
 ### FlexBE
 After running the launch file, FlexBe will pop up:
 
 #### General Test
-Load Behavior->System_Behaviour_Pi->Runtime Control->Insert full path to csv file containing the session parameters->Start Execution
+For Grasp Reset with Gen 3 and GPD run: Load Behavior->Grasp_Reset_GPD_Behavior_Kinova_Gen_3
+For Door/Drawer run: Load Behavior->Door_Drawer_Behavior
+
+Updated "Session Info" with path to csv file with trial info. 
+
 ##### Proper formatting of CSV file:
 ```
 testbed
@@ -216,8 +200,7 @@ OR
 drawer/door
 resistance_value, num_trials
 ... (repeat for each test)
-```
-- **IMPORTANT:** you must include the header line _testbed_ or _drawer/door_
-- See _[user_input_example.csv](https://github.com/OSUrobotics/infrastructure-packages/blob/new_file_structure/user_input_example.csv)_ for an example
+
+
 
 ### You're ready to go!
