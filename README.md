@@ -119,7 +119,10 @@ To be able to use one of the apparatuses, you must set up ROS communication betw
     export ROS_HOSTNAME=<PI-HOSTNAME>
     ROS_MASTER_URI=http://<HOSTNAME>:11311 # same as master machine
     ```
-5. (optional) Check that communication is working:
+
+5. Make sure on both devices to edit the hostname file located at /etc/hosts
+
+6. (optional) Check that communication is working:
     - Start a roscore on the container:
         ```console
         roscore
