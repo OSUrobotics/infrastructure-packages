@@ -147,7 +147,7 @@ xhost +local:docker &> /dev/null # run in a host terminal, not container!
 ```
 __Note:__ this needs to be done for every new session on the PC. If you don't want to do this evertime, then copy this command into the .bashrc file for your host machine located in the home directory.
 
-For basic run/testing, launch the example test file:
+For the door/drawer and basic run/testing, launch the example test file:
 ```console
 roslaunch infrastructure_flexbe_behaviors start_test.launch 
 ```
@@ -178,7 +178,11 @@ roslaunch RemasteredInterface main_page.launch
 After running the launch file, FlexBe will pop up:
 
 #### General Test
-Load Behavior->System_Behaviour_Pi->Runtime Control->Insert full path to csv file containing the session parameters->Start Execution
+For Grasp Reset with Gen 3 and GPD run: Load Behavior->Grasp_Reset_GPD_Behavior_Kinova_Gen_3
+For Door/Drawer run: Load Behavior->Door_Drawer_Behavior
+
+Updated "Session Info" with path to csv file with trial info. 
+
 ##### Proper formatting of CSV file:
 ```
 testbed
