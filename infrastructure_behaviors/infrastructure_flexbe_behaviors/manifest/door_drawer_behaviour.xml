@@ -26,7 +26,7 @@
 
 		<param type="text" name="arm_control_topic" default="start_arm_sequence" label="arm_control_topic" hint="Sets the arm_control_topic" />
 
-		<param type="yaml" name="session_info" default="/root/infrastructure_ws/src/infrastructure-packages/drawer_test.csv" label="session_info" hint="Sets the session_info">
+		<param type="yaml" name="session_info" default="/home/csrobot/catkin_ws/src/infrastructure-packages/drawer_test.csv" label="session_info" hint="Sets the session_info">
 			<key name="" />
 		</param>
 

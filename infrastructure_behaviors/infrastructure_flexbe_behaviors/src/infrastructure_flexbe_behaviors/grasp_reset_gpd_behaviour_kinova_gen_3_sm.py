@@ -87,13 +87,13 @@ class Grasp_Reset_GPD_Behaviour_Kinova_Gen_3SM(Behavior):
 			# x:576 y:225
 			OperatableStateMachine.add('Start Data Collection',
 										StageActionClient(topic=self.start_data_collection_topic),
-										transitions={'completed': 'PickAndPlace', 'failed': 'failed'},
+										transitions={'completed': 'PickAndPlace', 'failed': 'PickAndPlace'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:338 y:130
 			OperatableStateMachine.add('Stop Data Collection',
 										StageActionClient(topic=self.stop_data_collection_topic),
-										transitions={'completed': 'Trial Control', 'failed': 'failed'},
+										transitions={'completed': 'Trial Control', 'failed': 'Trial Control'},
 										autonomy={'completed': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:339 y:34

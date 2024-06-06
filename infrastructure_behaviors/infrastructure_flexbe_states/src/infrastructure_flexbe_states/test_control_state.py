@@ -52,6 +52,7 @@ class TestControlState(EventState):
             # # Store state parameters for later use.
             # self._num_trials = num_trials
             # self._num_tests = num_tests
+            print("HEREEEEEEEEEEEEEEEEEEE")
 
             #added
             self._tests = []
@@ -95,6 +96,7 @@ class TestControlState(EventState):
                 raise IOError("Invalid header line")
 
             self._num_tests = len(self._tests)
+            print(self._other_params)
             
             rospy.set_param('/trial_num', rospy.get_param("/starting_trial_num")-1)
 
