@@ -7,7 +7,7 @@
 	<author>Keegan, modified by Kyle</author>
 	<date>7/2/2023</date>
 	<description>
-		Behavior for use with the grasp reset and Kinova Gen 3 arm. Full functionallity, including object swapping.
+		Behavior for use with the grasp reset and Kinova Gen 3 arm. Requires external arm control node.
 	</description>
 
 

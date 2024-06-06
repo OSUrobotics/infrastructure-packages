@@ -25,7 +25,7 @@ Created on 7/2/2023
 '''
 class Grasp_Reset_GPD_Behaviour_Kinova_Gen_3SM(Behavior):
 	'''
-	Behavior for use with the grasp reset and Kinova Gen 3 arm. Full functionallity, including object swapping.
+	Behavior for use with the grasp reset and Kinova Gen 3 arm. Full functionallity, including Grasp Pose Detection.
 	'''
 
 

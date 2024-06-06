@@ -24,7 +24,7 @@ Created on 9/03/23
 '''
 class Door_Behaviour_Gen_3SM(Behavior):
 	'''
-	Door drawer behavior
+	Door drawer behavior with the Kinova Gen 3 arm.
 	'''
 
 
@@ -37,7 +37,7 @@ class Door_Behaviour_Gen_3SM(Behavior):
 		self.add_parameter('parameter_topic', 'set_test_parameters')
 		self.add_parameter('reset_topic', 'reset_hardware')
 		self.add_parameter('stop_data_collection_topic', 'stop_data_collection')
-		self.add_parameter('arm_control_topic', 'start_arm_sequence')
+		self.add_parameter('arm_control_topic', 'my_gen3/start_arm_sequence')
 		self.add_parameter('session_info', dict())
 
 		# references to used behaviors

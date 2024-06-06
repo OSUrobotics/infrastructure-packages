@@ -24,7 +24,7 @@ Created on 9/03/23
 '''
 class Door_Drawer_BehaviourSM(Behavior):
 	'''
-	Door drawer behavior
+	General door drawer behavior for use without an arm or as a template.
 	'''
 
 
